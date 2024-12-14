@@ -9,7 +9,7 @@ use parent 'Class::Accessor';
 our $VERSION = '0.01';
 
 Travel::Status::DE::DBRIS::Journey->mk_ro_accessors(
-	qw(type dep sched_dep rt_dep is_cancelled line stop_name stop_eva id admin_id journey_id sched_platform platform dest_name dest_eva route)
+	qw(type dep sched_dep rt_dep delay is_cancelled line stop_name stop_eva id admin_id journey_id sched_platform platform dest_name dest_eva route)
 );
 
 sub new {
@@ -39,6 +39,11 @@ sub new {
 		$ref->{rt_dep} = $strptime->parse_datetime( $json->{timeDelayed} );
 	}
 	$ref->{dep} = $ref->{rt_dep} // $ref->{schd_dep};
+
+	if ( $ref->{sched_dep} and $ref->{rt_dep} ) {
+		$ref->{delay} = $ref->{rt_dep}->subtract_datetime( $ref->{sched_dep} )
+		  ->in_units('minutes');
+	}
 
 	return $ref;
 }

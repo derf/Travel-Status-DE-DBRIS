@@ -50,7 +50,7 @@ sub new {
 
 	if ( my $eva = $conf{station} ) {
 		$req
-		  = "https://www.bahnhof.de/api/boards/departures?evaNumbers=${eva}&duration=60&stationCategory=1&locale=de&sortBy=TIME_SCHEDULE";
+		  = "https://www.bahnhof.de/api/boards/departures?evaNumbers=${eva}&duration=60&stationCategory=1&locale=de&sortBy=TIME";
 	}
 	elsif ( my $gs = $conf{geoSearch} ) {
 		my $lat = $gs->{latitude};

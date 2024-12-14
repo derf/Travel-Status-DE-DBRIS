@@ -147,12 +147,19 @@ if ($json_output) {
 }
 
 if ( $opt{station} ) {
-	my $max_line = max map { length( $_->line ) } $status->results;
-	my $max_dest = max map { length( $_->dest_name ) } $status->results;
+	my $max_line  = max map { length( $_->line ) } $status->results;
+	my $max_dest  = max map { length( $_->dest_name ) } $status->results;
+	my $max_delay = max map { length( $_->delay // q{} ) } $status->results;
+
+	$max_delay += 1;
+
 	for my $result ( $status->results ) {
 		printf(
-			"%s  %${max_line}s  %${max_dest}s  %s\n",
+			"%s  %s  %${max_line}s  %${max_dest}s  %s\n",
 			$result->is_cancelled ? '--:--' : $result->dep->strftime('%H:%M'),
+			$result->delay
+			? sprintf( "(%+${max_delay}d)", $result->delay )
+			: q{ } x ( $max_delay + 2 ),
 			$result->line,
 			$result->dest_name,
 			$result->platform // $result->sched_platform
