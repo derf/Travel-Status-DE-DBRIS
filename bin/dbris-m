@@ -150,6 +150,15 @@ if ( $opt{station} ) {
 }
 elsif ( $opt{geoSearch} ) {
 	for my $result ( $status->results ) {
-		printf( "%8d  %s\n", $result->eva, $result->name );
+		if ( defined $result->eva ) {
+			printf( "%8d  %s\n", $result->eva, $result->name );
+		}
+	}
+}
+elsif ( $opt{locationSearch} ) {
+	for my $result ( $status->results ) {
+		if ( defined $result->eva ) {
+			printf( "%8d  %s\n", $result->eva, $result->name );
+		}
 	}
 }
