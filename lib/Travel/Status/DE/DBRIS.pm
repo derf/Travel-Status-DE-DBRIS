@@ -13,6 +13,7 @@ use DateTime::Format::Strptime;
 use Encode qw(decode encode);
 use JSON;
 use LWP::UserAgent;
+use Travel::Status::DE::DBRIS::Journey;
 use Travel::Status::DE::DBRIS::Location;
 
 our $VERSION = '0.01';
@@ -67,10 +68,10 @@ sub new {
 		confess('station or geoSearch must be specified');
 	}
 
-	#$self->{strptime_obj} //= DateTime::Format::Strptime->new(
-	#	pattern   => '%Y%m%dT%H%M%S',
-	#	time_zone => $hafas_instance->{$service}{time_zone} // 'Europe/Berlin',
-	#);
+	$self->{strptime_obj} //= DateTime::Format::Strptime->new(
+		pattern   => '%Y-%m-%dT%H:%M:%S%Z',
+		time_zone => 'Europe/Berlin',
+	);
 
 	my $json = $self->{json} = JSON->new->utf8;
 
@@ -244,15 +245,24 @@ sub get_with_cache_p {
 sub parse_search {
 	my ($self) = @_;
 
-	$self->{results} = [];
-
-	if ( $self->{errstr} ) {
-		return $self;
-	}
-
 	@{ $self->{results} }
 	  = map { Travel::Status::DE::DBRIS::Location->new( json => $_ ) }
 	  @{ $self->{raw_json} // [] };
+
+	return $self;
+}
+
+sub parse_stationboard {
+	my ($self) = @_;
+
+	# @{$self->{messages}} = map { Travel::Status::DE::DBRIS::Message->new(...) } @{$self->{raw_json}{globalMessages}/[]};
+
+	@{ $self->{results} } = map {
+		Travel::Status::DE::DBRIS::Journey->new(
+			json         => $_,
+			strptime_obj => $self->{strptime_obj}
+		)
+	} @{ $self->{raw_json}{entries} // [] };
 
 	return $self;
 }

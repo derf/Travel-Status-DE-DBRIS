@@ -10,6 +10,7 @@ use DateTime;
 use Encode qw(decode);
 use JSON;
 use Getopt::Long qw(:config no_ignore_case);
+use List::Util   qw(max);
 use Travel::Status::DE::DBRIS;
 
 my $developer_mode;
@@ -146,7 +147,17 @@ if ($json_output) {
 }
 
 if ( $opt{station} ) {
-	die("Unimplemented");
+	my $max_line = max map { length( $_->line ) } $status->results;
+	my $max_dest = max map { length( $_->dest_name ) } $status->results;
+	for my $result ( $status->results ) {
+		printf(
+			"%s  %${max_line}s  %${max_dest}s  %s\n",
+			$result->is_cancelled ? '--:--' : $result->dep->strftime('%H:%M'),
+			$result->line,
+			$result->dest_name,
+			$result->platform // $result->sched_platform
+		);
+	}
 }
 elsif ( $opt{geoSearch} ) {
 	for my $result ( $status->results ) {
