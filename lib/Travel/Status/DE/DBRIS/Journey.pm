@@ -21,6 +21,11 @@ sub new {
 	my $ref = {
 		type                => $json->{type},
 		line                => $json->{lineName},
+		id                  => $json->{id},
+		journey_id          => $json->{journeyID},
+		admin_id            => $json->{administrationID},
+		stop_eva            => $json->{stopPlace}{eva},
+		stop_name           => $json->{stopPlace}{name},
 		is_cancelled        => $json->{canceled},
 		dest_name           => $json->{destination}{name},
 		platform            => $json->{platform},
