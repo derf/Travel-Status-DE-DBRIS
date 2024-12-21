@@ -289,3 +289,174 @@ sub result {
 # }}}
 
 1;
+
+__END__
+
+=head1 NAME
+
+Travel::Status::DE::DBRIS - Interface to bahn.de / bahnhof.de departure monitors
+
+=head1 SYNOPSIS
+
+Blocking variant:
+
+    use Travel::Status::DE::DBRIS;
+    
+    my $status = Travel::Status::DE::DBRIS->new(station => 8000098);
+    for my $r ($status->results) {
+        printf(
+            "%s +%-3d %10s -> %s\n",
+            $r->dep->strftime('%H:%M'),
+            $r->delay,
+            $r->line,
+            $r->dest_name
+        );
+    }
+
+Non-blocking variant;
+
+    use Mojo::Promise;
+    use Mojo::UserAgent;
+    use Travel::Status::DE::DBRIS;
+    
+    Travel::Status::DE::DBRIS->new_p(
+        station => 8000098,
+        promise => 'Mojo::Promise',
+        user_agent => Mojo::UserAgent->new
+    )->then(sub {
+        my ($status) = @_;
+        for my $r ($status->results) {
+            printf(
+                "%s +%-3d %10s -> %s\n",
+                $r->dep->strftime('%H:%M'),
+                $r->delay,
+                $r->line,
+                $r->dest_name
+            );
+        }
+    })->wait;
+
+=head1 VERSION
+
+version 0.01
+
+=head1 DESCRIPTION
+
+Travel::Status::DE::DBRIS is an unofficial interface to bahn.de and bahnhof.de
+APIs.
+
+=head1 METHODS
+
+=over
+
+=item my $status = Travel::Status::DE::DBRIS->new(I<%opt>)
+
+Requests item(s) as specified by I<opt> and returns a new
+Travel::Status::DE::DBRIS element with the results.  Dies if the wrong
+I<opt> were passed.
+
+I<opt> must contain either a B<station>, B<geoSearch>, or B<locationSearch> flag:
+
+=over
+
+=item B<station> => I<station>
+
+Request station board (departures) for I<station>, e.g. 8000080 for Dortmund
+Hbf. Results are available via C<< $status->results >>.
+
+=item B<geoSearch> => B<{> B<latitude> => I<latitude>, B<longitude> => I<longitude> B<}>
+
+Search for stations near I<latitude>, I<longitude>.
+Results are available via C<< $status->results >>.
+
+=item B<locationSearch> => I<query>
+
+Search for stations whose name is equal or similar to I<query>. Results are
+available via C<< $status->results >> and include the station ID needed for
+station board requests.
+
+=back
+
+The following optional flags may be set.
+Values in brackets indicate flags that are only relevant in certain request
+modes, e.g. geoSearch or station.
+
+=over
+
+=item B<cache> => I<$obj>
+
+A Cache::File(3pm) object used to cache realtime data requests. It should be
+configured for an expiry of one to two minutes.
+
+=item B<lwp_options> => I<\%hashref>
+
+Passed on to C<< LWP::UserAgent->new >>. Defaults to C<< { timeout => 10 } >>,
+you can use an empty hashref to unset the default.
+
+=back
+
+=item my $promise = Travel::Status::DE::DBRIS->new_p(I<%opt>)
+
+Return a promise yielding a Travel::Status::DE::DBRIS instance (C<< $status >>)
+on success, or an error message (same as C<< $status->errstr >>) on failure.
+
+In addition to the arguments of B<new>, the following mandatory arguments must
+be set:
+
+=over
+
+=item B<promise> => I<promises module>
+
+Promises implementation to use for internal promises as well as B<new_p> return
+value. Recommended: Mojo::Promise(3pm).
+
+=item B<user_agent> => I<user agent>
+
+User agent instance to use for asynchronous requests. The object must support
+promises (i.e., it must implement a C<< get_p >> function). Recommended:
+Mojo::UserAgent(3pm).
+
+=back
+
+=item $status->errstr
+
+In case of a fatal HTTP request or backend error, returns a string describing
+it. Returns undef otherwise.
+
+=item $status->results
+
+Returns a list of Travel::Status::DE::DBRIS::Location(3pm) or Travel::Status::DE::DBRIS::Journey(3pm) objects, depending on the arguments passed to B<new>.
+
+=back
+
+=head1 DIAGNOSTICS
+
+None.
+
+=head1 DEPENDENCIES
+
+=over
+
+=item * DateTime(3pm)
+
+=item * List::Util(3pm)
+
+=item * LWP::UserAgent(3pm)
+
+=back
+
+=head1 BUGS AND LIMITATIONS
+
+This module is very much work-in-progress.
+
+=head1 REPOSITORY
+
+L<https://github.com/derf/Travel-Status-DE-DBRIS>
+
+=head1 AUTHOR
+
+Copyright (C) 2024 by Birte Kristina Friesel E<lt>derf@finalrewind.orgE<gt>
+
+=head1 LICENSE
+
+This module is licensed under the same terms as Perl itself.

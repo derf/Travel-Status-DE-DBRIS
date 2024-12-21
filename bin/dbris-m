@@ -40,7 +40,7 @@ GetOptions(
 
 if ($use_cache) {
 	my $cache_path = ( $ENV{XDG_CACHE_HOME} // "$ENV{HOME}/.cache" )
-	  . '/Travel-Status-DE-HAFAS';
+	  . '/Travel-Status-DE-DBRIS';
 	eval {
 		require Cache::File;
 		$cache = Cache::File->new(
@@ -190,3 +190,122 @@ elsif ( $opt{locationSearch} ) {
 		}
 	}
 }
+
+__END__
+
+=head1 NAME
+
+dbris-m - Interface to bahn.de / bahnhof.de RIS::*-based departure monitors
+
+=head1 SYNOPSIS
+
+B<dbris-m> I<station>
+
+B<dbris-m> B<?>I<query>|I<lat>B<:>I<lon>
+
+=head1 VERSION
+
+version 0.01
+
+=head1 DESCRIPTION
+
+dbris-m is an interface to the public transport services operated by
+Deutsche Bahn on bahn.de and bahnhof.de.
+
+It can serve as an arrival/departure monitor, request details about a specific
+trip/journey, and look up public transport stops by name or geolocation.
+The operating mode depends on the contents of its non-option argument.
+
+=head2 Departure Monitor (I<station>)
+
+Show departures at I<station>. I<station> may be given as a station name or
+station ID.  For each departure, B<dbris-m> shows
+
+=over
+
+=item * estimated departure time,
+
+=item * delay, if known,
+
+=item * trip name, number, or line,
+
+=item * direction / destination, and
+
+=item * platform, if known.
+
+=back
+
+=head2 Location Search (B<?>I<query>|I<lat>B<:>I<lon>)
+
+List stations that match I<query> or that are located in the vicinity of
+I<lat>B<:>I<lon> geocoordinates with station ID and name.
+
+=head1 OPTIONS
+
+Values in brackets indicate options that only apply to the corresponding
+operating mode(s).
+
+=over
+
+=item B<--json>
+
+Print result(s) as JSON and exit. This is a dump of internal data structures
+and not guaranteed to remain stable between minor versions. Please use the
+Travel::Status::DE::DBRIS(3pm) module if you need a proper API.
+
+=item B<--no-cache>
+
+If the Cache::File module is available, server replies are cached in
+F<~/.cache/Travel-Status-DE-DBRIS> (or a path relative to C<$XDG_CACHE_HOME>,
+if set) for 90 seconds. Use this option to disable caching. You can also use
+B<--cache> to re-enable it.
+
+=item B<--raw-json>
+
+Print unprocessed API response as JSON and exit.
+Useful for debugging and development purposes.
+
+=item B<-V>, B<--version>
+
+Show version information and exit.
+
+=back
+
+=head1 EXIT STATUS
+
+0 upon success, 1 upon internal error, 2 upon backend error.
+
+=head1 CONFIGURATION
+
+None.
+
+=head1 DEPENDENCIES
+
+=over
+
+=item * Class::Accessor(3pm)
+
+=item * DateTime(3pm)
+
+=item * LWP::UserAgent(3pm)
+
+=back
+
+=head1 BUGS AND LIMITATIONS
+
+=over
+
+=item * This module is very much work-in-progress
+
+=item * At the moment, there is no way of getting journey IDs from the
+departure monitor, and thus no way to get departure details.
+
+=back
+
+=head1 AUTHOR
+
+Copyright (C) 2024 by Birte Kristina Friesel E<lt>derf@finalrewind.orgE<gt>
+
+=head1 LICENSE
+
+This program is licensed under the same terms as Perl itself.
