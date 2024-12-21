@@ -75,6 +75,16 @@ elsif ( $opt{station} =~ m{[|]} ) {
 	$opt{journey} = { id => $opt{station} };
 	delete $opt{station};
 }
+elsif ( $opt{station} !~ m{ ^ \d+ $ }x ) {
+	my $status
+	  = Travel::Status::DE::DBRIS->new( locationSearch => $opt{station} );
+	for my $result ( $status->results ) {
+		if ( defined $result->eva ) {
+			$opt{station} = $result->eva;
+			last;
+		}
+	}
+}
 
 my $status = Travel::Status::DE::DBRIS->new(%opt);
 
