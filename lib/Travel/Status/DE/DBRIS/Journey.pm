@@ -9,7 +9,7 @@ use parent 'Class::Accessor';
 our $VERSION = '0.01';
 
 Travel::Status::DE::DBRIS::Journey->mk_ro_accessors(
-	qw(type dep sched_dep rt_dep delay is_cancelled line stop_eva journey_id platform rt_platform dest_name via)
+	qw(type dep sched_dep rt_dep delay is_cancelled line stop_eva id platform rt_platform destination via via_last)
 );
 
 sub new {
@@ -21,12 +21,13 @@ sub new {
 	my $ref = {
 		type        => $json->{verkehrmittel}{kurzText},
 		line        => $json->{verkehrmittel}{mittelText},
-		journey_id  => $json->{journeyID},
+		id          => $json->{journeyId},
 		stop_eva    => $json->{bahnhofsId},
-		dest_name   => $json->{terminus},
+		destination => $json->{terminus},
 		platform    => $json->{gleis},
 		rt_platform => $json->{ezGleis},
 		via         => $json->{ueber},
+		via_last    => ( $json->{ueber} // [] )->[-1],
 	};
 
 	bless( $ref, $obj );
@@ -67,6 +68,12 @@ sub route {
 		@{ $self->{raw_cancelled_route} // [] } );
 
 	return @{ $self->{route} };
+}
+
+sub messages {
+	my ($self) = @_;
+
+	return @{ $self->{messages} // [] };
 }
 
 sub TO_JSON {
