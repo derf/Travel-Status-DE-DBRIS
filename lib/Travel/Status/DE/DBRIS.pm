@@ -48,9 +48,24 @@ sub new {
 
 	my $req;
 
-	if ( my $eva = $conf{station} ) {
+	if ( my $station = $conf{station} ) {
+		my $now = DateTime->now( time_zone => 'Europe/Berlin' );
 		$req
-		  = "https://www.bahnhof.de/api/boards/departures?evaNumbers=${eva}&duration=60&stationCategory=1&locale=de&sortBy=TIME";
+		  = 'https://www.bahn.de/web/api/reiseloesung/abfahrten'
+		  . '?datum='
+		  . $now->strftime('%Y-%m-%d')
+		  . '&zeit='
+		  . $now->strftime('%H:%M:00')
+		  . '&ortExtId='
+		  . $station->{eva}
+		  . '&ortId='
+		  . $station->{id}
+		  . '&mitVias=true&maxVias=8'
+		  . '&verkehrsmittel[]=ICE&verkehrsmittel[]=EC_IC'
+		  . '&verkehrsmittel[]=IR&verkehrsmittel[]=REGIONAL'
+		  . '&verkehrsmittel[]=SBAHN&verkehrsmittel[]=BUS'
+		  . '&verkehrsmittel[]=SCHIFF&verkehrsmittel[]=UBAHN'
+		  . '&verkehrsmittel[]=TRAM&verkehrsmittel[]=ANRUFPFLICHTIG';
 	}
 	elsif ( my $gs = $conf{geoSearch} ) {
 		my $lat = $gs->{latitude};
@@ -69,7 +84,7 @@ sub new {
 	}
 
 	$self->{strptime_obj} //= DateTime::Format::Strptime->new(
-		pattern   => '%Y-%m-%dT%H:%M:%S%Z',
+		pattern   => '%Y-%m-%dT%H:%M:%S',
 		time_zone => 'Europe/Berlin',
 	);
 

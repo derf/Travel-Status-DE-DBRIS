@@ -80,7 +80,7 @@ elsif ( $opt{station} !~ m{ ^ \d+ $ }x ) {
 	  = Travel::Status::DE::DBRIS->new( locationSearch => $opt{station} );
 	for my $result ( $status->results ) {
 		if ( defined $result->eva ) {
-			$opt{station} = $result->eva;
+			$opt{station} = $result;
 			last;
 		}
 	}
@@ -172,7 +172,7 @@ if ( $opt{station} ) {
 			: q{ } x ( $max_delay + 2 ),
 			$result->line,
 			$result->dest_name,
-			$result->platform // $result->sched_platform
+			$result->rt_platform // $result->platform // q{}
 		);
 	}
 }

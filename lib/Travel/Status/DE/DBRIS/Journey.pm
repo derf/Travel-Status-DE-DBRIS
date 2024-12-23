@@ -9,45 +9,46 @@ use parent 'Class::Accessor';
 our $VERSION = '0.01';
 
 Travel::Status::DE::DBRIS::Journey->mk_ro_accessors(
-	qw(type dep sched_dep rt_dep delay is_cancelled line stop_name stop_eva id admin_id journey_id sched_platform platform dest_name dest_eva route)
+	qw(type dep sched_dep rt_dep delay is_cancelled line stop_eva journey_id platform rt_platform dest_name via)
 );
 
 sub new {
 	my ( $obj, %opt ) = @_;
 
-	my $json     = $opt{json}->[0];
+	my $json     = $opt{json};
 	my $strptime = $opt{strptime_obj};
 
 	my $ref = {
-		type                => $json->{type},
-		line                => $json->{lineName},
-		id                  => $json->{id},
-		journey_id          => $json->{journeyID},
-		admin_id            => $json->{administrationID},
-		stop_eva            => $json->{stopPlace}{eva},
-		stop_name           => $json->{stopPlace}{name},
-		is_cancelled        => $json->{canceled},
-		dest_name           => $json->{destination}{name},
-		platform            => $json->{platform},
-		sched_platform      => $json->{platformSchedule},
-		dest_eva            => $json->{destination}{evaNumber},
-		raw_route           => $json->{viaStops},
-		raw_cancelled_route => $json->{canceledStopsAfterActualDestination},
+		type        => $json->{verkehrmittel}{kurzText},
+		line        => $json->{verkehrmittel}{mittelText},
+		journey_id  => $json->{journeyID},
+		stop_eva    => $json->{bahnhofsId},
+		dest_name   => $json->{terminus},
+		platform    => $json->{gleis},
+		rt_platform => $json->{ezGleis},
+		via         => $json->{ueber},
 	};
 
 	bless( $ref, $obj );
 
-	if ( $json->{timeSchedule} ) {
-		$ref->{sched_dep} = $strptime->parse_datetime( $json->{timeSchedule} );
+	if ( $json->{zeit} ) {
+		$ref->{sched_dep} = $strptime->parse_datetime( $json->{zeit} );
 	}
-	if ( $json->{timeDelayed} ) {
-		$ref->{rt_dep} = $strptime->parse_datetime( $json->{timeDelayed} );
+	if ( $json->{ezZeit} ) {
+		$ref->{rt_dep} = $strptime->parse_datetime( $json->{ezZeit} );
 	}
-	$ref->{dep} = $ref->{rt_dep} // $ref->{schd_dep};
+	$ref->{dep} = $ref->{rt_dep} // $ref->{sched_dep};
 
 	if ( $ref->{sched_dep} and $ref->{rt_dep} ) {
 		$ref->{delay} = $ref->{rt_dep}->subtract_datetime( $ref->{sched_dep} )
 		  ->in_units('minutes');
+	}
+
+	for my $message ( @{ $json->{meldungen} // [] } ) {
+		if ( $message->{type} and $message->{type} eq 'HALT_AUSFALL' ) {
+			$ref->{is_cancelled} = 1;
+		}
+		push( @{ $ref->{messages} }, $message );
 	}
 
 	return $ref;
