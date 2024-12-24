@@ -6,11 +6,11 @@ use 5.020;
 
 use parent 'Class::Accessor';
 
+use Travel::Status::DE::DBRIS::Location;
+
 our $VERSION = '0.01';
 
-Travel::Status::DE::DBRIS::Journey->mk_ro_accessors(
-	qw(type dep sched_dep rt_dep delay is_cancelled line stop_eva id platform rt_platform destination via via_last)
-);
+Travel::Status::DE::DBRIS::Journey->mk_ro_accessors(qw(train is_cancelled));
 
 sub new {
 	my ( $obj, %opt ) = @_;
@@ -19,36 +19,15 @@ sub new {
 	my $strptime = $opt{strptime_obj};
 
 	my $ref = {
-		type        => $json->{verkehrmittel}{kurzText},
-		line        => $json->{verkehrmittel}{mittelText},
-		id          => $json->{journeyId},
-		stop_eva    => $json->{bahnhofsId},
-		destination => $json->{terminus},
-		platform    => $json->{gleis},
-		rt_platform => $json->{ezGleis},
-		via         => $json->{ueber},
-		via_last    => ( $json->{ueber} // [] )->[-1],
+		train        => $json->{zugName},
+		is_cancelled => $json->{cancelled},
+		raw_route    => $json->{halte},
+		strptime_obj => $strptime,
 	};
 
 	bless( $ref, $obj );
 
-	if ( $json->{zeit} ) {
-		$ref->{sched_dep} = $strptime->parse_datetime( $json->{zeit} );
-	}
-	if ( $json->{ezZeit} ) {
-		$ref->{rt_dep} = $strptime->parse_datetime( $json->{ezZeit} );
-	}
-	$ref->{dep} = $ref->{rt_dep} // $ref->{sched_dep};
-
-	if ( $ref->{sched_dep} and $ref->{rt_dep} ) {
-		$ref->{delay} = $ref->{rt_dep}->subtract_datetime( $ref->{sched_dep} )
-		  ->in_units('minutes');
-	}
-
-	for my $message ( @{ $json->{meldungen} // [] } ) {
-		if ( $message->{type} and $message->{type} eq 'HALT_AUSFALL' ) {
-			$ref->{is_cancelled} = 1;
-		}
+	for my $message ( @{ $json->{himMeldungen} // [] } ) {
 		push( @{ $ref->{messages} }, $message );
 	}
 
@@ -63,8 +42,12 @@ sub route {
 	}
 
 	@{ $self->{route} }
-	  = map { Travel::Status::DE::DBRIS::Location->new( json => $_ ) }
-	  ( @{ $self->{raw_route} // [] },
+	  = map {
+		Travel::Status::DE::DBRIS::Location->new(
+			json         => $_,
+			strptime_obj => $self->{strptime_obj}
+		)
+	  } ( @{ $self->{raw_route} // [] },
 		@{ $self->{raw_cancelled_route} // [] } );
 
 	return @{ $self->{route} };

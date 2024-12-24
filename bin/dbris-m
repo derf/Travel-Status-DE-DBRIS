@@ -74,7 +74,7 @@ elsif ( $opt{station} =~ m{ ^ [?] (?<query> .*) $ }x ) {
 	delete $opt{station};
 }
 elsif ( $opt{station} =~ m{[|]} ) {
-	$opt{journey} = { id => $opt{station} };
+	$opt{journey} = $opt{station};
 	delete $opt{station};
 }
 elsif ( $opt{station} !~ m{ ^ \d+ $ }x ) {
@@ -189,6 +189,44 @@ if ( $opt{station} ) {
 		if ( $show_jid or scalar $result->messages ) {
 			say q{};
 		}
+	}
+}
+elsif ( $opt{journey} ) {
+	my $trip = $status->result;
+
+	my $max_name     = max map { length( $_->name ) } $trip->route;
+	my $max_platform = max map { length( $_->platform // q{} ) } $trip->route;
+
+	say $trip->train;
+	say q{};
+
+	for my $stop ( $trip->route ) {
+		if ( $stop->is_cancelled ) {
+			print('    --:--    ');
+		}
+		elsif ( $stop->arr and $stop->dep ) {
+			printf( '%s → %s',
+				$stop->arr->strftime('%H:%M'),
+				$stop->dep->strftime('%H:%M'),
+			);
+		}
+		elsif ( $stop->dep ) {
+			printf( '        %s', $stop->dep->strftime('%H:%M') );
+		}
+		elsif ( $stop->arr ) {
+			printf( '%s        ', $stop->arr->strftime('%H:%M') );
+		}
+		else {
+			print('             ');
+		}
+		printf( "  %${max_name}s  %${max_platform}s\n",
+			$stop->name, $stop->platform // q{} );
+	}
+	if ( $trip->messages ) {
+		say q{};
+	}
+	for my $message ( $trip->messages ) {
+		say $message->{text};
 	}
 }
 elsif ( $opt{geoSearch} ) {

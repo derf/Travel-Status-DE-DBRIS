@@ -13,6 +13,7 @@ use DateTime::Format::Strptime;
 use Encode qw(decode encode);
 use JSON;
 use LWP::UserAgent;
+use Travel::Status::DE::DBRIS::JourneyAtStop;
 use Travel::Status::DE::DBRIS::Journey;
 use Travel::Status::DE::DBRIS::Location;
 
@@ -77,10 +78,16 @@ sub new {
 		$req
 		  = "https://www.bahn.de/web/api/reiseloesung/orte?suchbegriff=${query}&typ=ALL&limit=10";
 	}
-
-	# journey : https://www.bahn.de/web/api/reiseloesung/fahrt?journeyId=2%7C%23VN%231%23ST%231733779122%23PI%230%23ZI%23324190%23TA%230%23DA%23141224%231S%238000001%231T%231822%23LS%238000080%23LT%232050%23PU%2380%23RT%231%23CA%23DPN%23ZE%2326431%23ZB%23RE+26431%23PC%233%23FR%238000001%23FT%231822%23TO%238000080%23TT%232050%23&poly=true
+	elsif ( my $journey_id = $conf{journey} ) {
+		my $poly = $conf{with_polyline} ? 'true' : 'false';
+		$journey_id =~ s{[#]}{%23}g;
+		$req
+		  = "https://www.bahn.de/web/api/reiseloesung/fahrt?journeyId=${journey_id}&poly=${poly}";
+	}
 	else {
-		confess('station or geoSearch must be specified');
+		confess(
+			'station / geoSearch  / locationSearch / journey must be specified'
+		);
 	}
 
 	$self->{strptime_obj} //= DateTime::Format::Strptime->new(
@@ -119,6 +126,9 @@ sub new {
 
 	if ( $conf{station} ) {
 		$self->parse_stationboard;
+	}
+	elsif ( $conf{journey} ) {
+		$self->parse_journey;
 	}
 	elsif ( $conf{geoSearch} or $conf{locationSearch} ) {
 		$self->parse_search;
@@ -257,6 +267,15 @@ sub get_with_cache_p {
 	return $promise;
 }
 
+sub parse_journey {
+	my ($self) = @_;
+
+	$self->{result} = Travel::Status::DE::DBRIS::Journey->new(
+		json         => $self->{raw_json},
+		strptime_obj => $self->{strptime_obj}
+	);
+}
+
 sub parse_search {
 	my ($self) = @_;
 
@@ -273,7 +292,7 @@ sub parse_stationboard {
 	# @{$self->{messages}} = map { Travel::Status::DE::DBRIS::Message->new(...) } @{$self->{raw_json}{globalMessages}/[]};
 
 	@{ $self->{results} } = map {
-		Travel::Status::DE::DBRIS::Journey->new(
+		Travel::Status::DE::DBRIS::JourneyAtStop->new(
 			json         => $_,
 			strptime_obj => $self->{strptime_obj}
 		)
@@ -440,7 +459,7 @@ it. Returns undef otherwise.
 
 =item $status->results
 
-Returns a list of Travel::Status::DE::DBRIS::Location(3pm) or Travel::Status::DE::DBRIS::Journey(3pm) objects, depending on the arguments passed to B<new>.
+Returns a list of Travel::Status::DE::DBRIS::Location(3pm) or Travel::Status::DE::DBRIS::JourneyAtStop(3pm) objects, depending on the arguments passed to B<new>.
 
 =back
 
