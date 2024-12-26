@@ -277,7 +277,9 @@ dbris-m - Interface to bahn.de / bahnhof.de RIS::*-based departure monitors
 
 =head1 SYNOPSIS
 
-B<dbris-m> I<station>
+B<dbris-m> [B<-j>] I<station>
+
+B<dbris-m> I<JourneyID>
 
 B<dbris-m> B<?>I<query>|I<lat>B<:>I<lon>
 
@@ -313,6 +315,13 @@ station ID.  For each departure, B<dbris-m> shows
 
 =back
 
+=head2 Trip details (I<JourneyID>)
+
+List intermediate stops of I<JourneyID> (as given by the departure monitor when
+invoed with B<-j> / B<--with-jid>) with arrival/departure time, delay (if
+available), occupancy (if available), and stop name. Also includes some generic
+trip information.
+
 =head2 Location Search (B<?>I<query>|I<lat>B<:>I<lon>)
 
 List stations that match I<query> or that are located in the vicinity of
@@ -325,6 +334,12 @@ operating mode(s).
 
 =over
 
+=item B<-j>, B<--with-jid> (departure monitor)
+
+Show JourneyID for each listed arrival/departure.
+These can be used to obtain details on individual trips with subsequent
+B<dbris-m> invocations.
+
 =item B<--json>
 
 Print result(s) as JSON and exit. This is a dump of internal data structures
@@ -333,9 +348,9 @@ Travel::Status::DE::DBRIS(3pm) module if you need a proper API.
 
 =item B<--no-cache>
 
-If the Cache::File module is available, server replies are cached in
-F<~/.cache/Travel-Status-DE-DBRIS> (or a path relative to C<$XDG_CACHE_HOME>,
-if set) for 90 seconds. Use this option to disable caching. You can also use
+By default, if the Cache::File module is available, server replies are cached
+for 90 seconds in F<~/.cache/Travel-Status-DE-DBRIS> (or a path relative to
+C<$XDG_CACHE_HOME>, if set). Use this option to disable caching. You can use
 B<--cache> to re-enable it.
 
 =item B<--raw-json>
