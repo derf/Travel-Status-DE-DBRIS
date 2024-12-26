@@ -13,6 +13,7 @@ use Getopt::Long qw(:config no_ignore_case);
 use List::Util   qw(max);
 use Travel::Status::DE::DBRIS;
 
+my ( $date, $time );
 my $developer_mode;
 my $show_jid;
 my $use_cache = 1;
@@ -30,8 +31,10 @@ my $output_bold  = -t STDOUT ? "\033[1m" : q{};
 my $output_reset = -t STDOUT ? "\033[0m" : q{};
 
 GetOptions(
+	'd|date=s'   => \$date,
 	'h|help'     => sub { show_help(0) },
 	'j|with-jid' => \$show_jid,
+	't|time=s'   => \$time,
 	'V|version'  => \&show_version,
 	'cache!'     => \$use_cache,
 	'devmode'    => \$developer_mode,
@@ -78,14 +81,59 @@ elsif ( $opt{station} =~ m{[|]} ) {
 	delete $opt{station};
 }
 elsif ( $opt{station} !~ m{ ^ \d+ $ }x ) {
-	my $status
-	  = Travel::Status::DE::DBRIS->new( locationSearch => $opt{station} );
+	my $status = Travel::Status::DE::DBRIS->new(
+		locationSearch => $opt{station},
+		developer_mode => $developer_mode,
+	);
+	my $found;
 	for my $result ( $status->results ) {
+		say $result->name;
 		if ( defined $result->eva ) {
 			$opt{station} = $result;
+			$found = 1;
 			last;
 		}
 	}
+	if ( not $found ) {
+		say "Could not find stop '$opt{station}'";
+		exit 1;
+	}
+}
+
+if ( $date or $time ) {
+	my $dt = DateTime->now( time_zone => 'Europe/Berlin' );
+	if ($date) {
+		if ( $date
+			=~ m{ ^ (?<day> \d{1,2} ) [.] (?<month> \d{1,2} ) [.] (?<year> \d{4})? $ }x
+		  )
+		{
+			$dt->set(
+				day   => $+{day},
+				month => $+{month}
+			);
+			if ( $+{year} ) {
+				$dt->set( year => $+{year} );
+			}
+		}
+		else {
+			say '--date must be specified as DD.MM.[YYYY]';
+			exit 1;
+		}
+	}
+	if ($time) {
+		if ( $time =~ m{ ^ (?<hour> \d{1,2} ) : (?<minute> \d{1,2} ) $ }x ) {
+			$dt->set(
+				hour   => $+{hour},
+				minute => $+{minute},
+				second => 0,
+			);
+		}
+		else {
+			say '--time must be specified as HH:MM';
+			exit 1;
+		}
+	}
+	$opt{datetime} = $dt;
 }
 
 my $status = Travel::Status::DE::DBRIS->new(%opt);
@@ -273,11 +321,11 @@ __END__
 
 =head1 NAME
 
-dbris-m - Interface to bahn.de / bahnhof.de RIS::*-based departure monitors
+dbris-m - Interface to bahn.de public transit services
 
 =head1 SYNOPSIS
 
-B<dbris-m> [B<-j>] I<station>
+B<dbris-m> [B<-d> I<DD.MM.YYYY>] [B<-t> I<HH:MM>] [B<-j>] I<station>
 
 B<dbris-m> I<JourneyID>
 
@@ -289,12 +337,14 @@ version 0.01
 
 =head1 DESCRIPTION
 
-dbris-m is an interface to the public transport services operated by
-Deutsche Bahn on bahn.de and bahnhof.de.
+B<dbris-m> is an interface to the public transport services available on
+bahn.de. According to word of mouth, it uses the HAFAS backend that can also
+be accessed by Travel::Status::DE::HAFAS(3pm)'s DB service. However, the
+bahn.de entry point is likely more reliable in the long run.
 
-It can serve as an arrival/departure monitor, request details about a specific
-trip/journey, and look up public transport stops by name or geolocation.
-The operating mode depends on the contents of its non-option argument.
+B<dbris-m> can serve as an arrival/departure monitor, request details about a
+specific trip, and look up public transport stops by name or geolocation. The
+operating mode depends on the contents of its non-option argument.
 
 =head2 Departure Monitor (I<station>)
 
@@ -334,6 +384,11 @@ operating mode(s).
 
 =over
 
+=item B<-d>, B<--date> I<DD.MM.[YYYY]> (departure monitor)
+
+Request departures on the specified date.
+Default: today.
+
 =item B<-j>, B<--with-jid> (departure monitor)
 
 Show JourneyID for each listed arrival/departure.
@@ -357,6 +412,11 @@ B<--cache> to re-enable it.
 
 Print unprocessed API response as JSON and exit.
 Useful for debugging and development purposes.
+
+=item B<-t>, B<--date> I<HH:MM> (departure monitor)
+
+Request departures on or after the specified time.
+Default: now.
 
 =item B<-V>, B<--version>
 

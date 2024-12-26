@@ -33,7 +33,6 @@ sub new {
 		$ua->env_proxy;
 	}
 
-	my $now  = DateTime->now( time_zone => 'Europe/Berlin' );
 	my $self = {
 		cache          => $conf{cache},
 		developer_mode => $conf{developer_mode},
@@ -41,8 +40,6 @@ sub new {
 		results        => [],
 		station        => $conf{station},
 		ua             => $ua,
-		now            => $now,
-		tz_offset      => $now->offset / 60,
 	};
 
 	bless( $self, $obj );
@@ -50,13 +47,14 @@ sub new {
 	my $req;
 
 	if ( my $station = $conf{station} ) {
-		my $now = DateTime->now( time_zone => 'Europe/Berlin' );
+		my $dt = $conf{datetime}
+		  // DateTime->now( time_zone => 'Europe/Berlin' );
 		$req
 		  = 'https://www.bahn.de/web/api/reiseloesung/abfahrten'
 		  . '?datum='
-		  . $now->strftime('%Y-%m-%d')
+		  . $dt->strftime('%Y-%m-%d')
 		  . '&zeit='
-		  . $now->strftime('%H:%M:00')
+		  . $dt->strftime('%H:%M:00')
 		  . '&ortExtId='
 		  . $station->{eva}
 		  . '&ortId='
