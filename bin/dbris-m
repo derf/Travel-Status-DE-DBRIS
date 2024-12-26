@@ -85,6 +85,10 @@ elsif ( $opt{station} !~ m{ ^ \d+ $ }x ) {
 		locationSearch => $opt{station},
 		developer_mode => $developer_mode,
 	);
+	if ( my $err = $status->errstr ) {
+		say STDERR "Request error while looking up '$opt{station}': ${err}";
+		exit 2;
+	}
 	my $found;
 	for my $result ( $status->results ) {
 		say $result->name;
