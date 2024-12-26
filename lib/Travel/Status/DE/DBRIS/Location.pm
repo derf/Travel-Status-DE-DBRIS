@@ -50,6 +50,22 @@ sub new {
 		  = $opt{strptime_obj}->parse_datetime( $json->{ezAnkunftsZeitpunkt} );
 	}
 
+	for my $message ( @{ $json->{priorisierteMeldungen} // [] } ) {
+		if ( $message->{type} and $message->{type} eq 'HALT_AUSFALL' ) {
+			$ref->{is_cancelled} = 1;
+		}
+		push( @{ $ref->{messages} }, $message );
+	}
+
+	for my $message ( @{ $json->{risMeldungen} // [] } ) {
+		if (    $message->{key}
+			and $message->{key} eq 'text.realtime.stop.cancelled' )
+		{
+			$ref->{is_cancelled} = 1;
+		}
+		$ref->{ris_messages}{ $message->{key} } = $message->{value};
+	}
+
 	$ref->{arr}      = $ref->{rt_arr}      // $ref->{sched_arr};
 	$ref->{dep}      = $ref->{rt_dep}      // $ref->{sched_dep};
 	$ref->{platform} = $ref->{rt_platform} // $ref->{sched_platform};
