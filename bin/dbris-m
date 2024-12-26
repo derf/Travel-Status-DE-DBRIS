@@ -181,7 +181,7 @@ if ( $opt{station} ) {
 			$result->rt_platform // $result->platform // q{}
 		);
 		if ($show_jid) {
-			say $result->id;
+			say $result->id =~ s{ }{}gr;
 		}
 		for my $message ( $result->messages ) {
 			say $message->{text};
