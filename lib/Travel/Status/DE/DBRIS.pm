@@ -95,6 +95,11 @@ sub new {
 		time_zone => 'Europe/Berlin',
 	);
 
+	$self->{strpdate_obj} //= DateTime::Format::Strptime->new(
+		pattern   => '%Y-%m-%d',
+		time_zone => 'Europe/Berlin',
+	);
+
 	my $json = $self->{json} = JSON->new->utf8;
 
 	if ( $conf{async} ) {
@@ -272,7 +277,8 @@ sub parse_journey {
 
 	$self->{result} = Travel::Status::DE::DBRIS::Journey->new(
 		json         => $self->{raw_json},
-		strptime_obj => $self->{strptime_obj}
+		strpdate_obj => $self->{strpdate_obj},
+		strptime_obj => $self->{strptime_obj},
 	);
 }
 

@@ -211,8 +211,7 @@ elsif ( $opt{journey} ) {
 		}
 	}
 
-	say $trip->train;
-	say q{};
+	printf( "%s am %s\n\n", $trip->train, $trip->day->strftime('%d.%m.%Y') );
 
 	for my $stop ( $trip->route ) {
 		if ( $stop == $mark_stop ) {
@@ -241,6 +240,12 @@ elsif ( $opt{journey} ) {
 		if ( $stop == $mark_stop ) {
 			print($output_reset);
 		}
+	}
+	if ( $trip->attributes ) {
+		say q{};
+	}
+	for my $attr ( $trip->attributes ) {
+		say $attr->{value};
 	}
 	if ( $trip->messages ) {
 		say q{};
