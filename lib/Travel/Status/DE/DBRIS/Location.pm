@@ -10,7 +10,7 @@ our $VERSION = '0.01';
 
 Travel::Status::DE::DBRIS::Location->mk_ro_accessors(
 	qw(eva id lat lon name products type is_cancelled is_additional is_separation display_priority
-	  dep arr platform
+	  dep arr platform sched_platform rt_platform
 	)
 );
 
@@ -20,17 +20,17 @@ sub new {
 	my $json = $opt{json};
 
 	my $ref = {
-		eva           => $json->{extId} // $json->{evaNumber},
-		id            => $json->{id},
-		lat           => $json->{lat},
-		lon           => $json->{lon},
-		name          => $json->{name},
-		products      => $json->{products},
-		type          => $json->{type},
-		is_cancelled  => $json->{canceled},
-		is_additional => $json->{additional},
-		platform      => $json->{gleis},
-		rt_platform   => $json->{ezGleis},
+		eva            => $json->{extId} // $json->{evaNumber},
+		id             => $json->{id},
+		lat            => $json->{lat},
+		lon            => $json->{lon},
+		name           => $json->{name},
+		products       => $json->{products},
+		type           => $json->{type},
+		is_cancelled   => $json->{canceled},
+		is_additional  => $json->{additional},
+		sched_platform => $json->{gleis},
+		rt_platform    => $json->{ezGleis},
 	};
 
 	if ( $json->{abfahrtsZeitpunkt} ) {
@@ -50,8 +50,9 @@ sub new {
 		  = $opt{strptime_obj}->parse_datetime( $json->{ezAnkunftsZeitpunkt} );
 	}
 
-	$ref->{arr} = $ref->{rt_arr} // $ref->{sched_arr};
-	$ref->{dep} = $ref->{rt_dep} // $ref->{sched_dep};
+	$ref->{arr}      = $ref->{rt_arr}      // $ref->{sched_arr};
+	$ref->{dep}      = $ref->{rt_dep}      // $ref->{sched_dep};
+	$ref->{platform} = $ref->{rt_platform} // $ref->{sched_platform};
 
 	bless( $ref, $obj );
 
