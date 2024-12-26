@@ -197,10 +197,27 @@ elsif ( $opt{journey} ) {
 	my $max_name     = max map { length( $_->name ) } $trip->route;
 	my $max_platform = max map { length( $_->platform // q{} ) } $trip->route;
 
+	my $mark_stop = 0;
+	my $now       = DateTime->now( time_zone => 'Europe/Berlin' );
+	for my $i ( reverse 1 .. ( scalar $trip->route // 0 ) ) {
+		my $stop = ( $trip->route )[ $i - 1 ];
+		if (
+			not $stop->is_cancelled
+			and (  $stop->dep and $now <= $stop->dep
+				or $stop->arr and $now <= $stop->arr )
+		  )
+		{
+			$mark_stop = $stop;
+		}
+	}
+
 	say $trip->train;
 	say q{};
 
 	for my $stop ( $trip->route ) {
+		if ( $stop == $mark_stop ) {
+			print($output_bold);
+		}
 		if ( $stop->is_cancelled ) {
 			print('    --:--    ');
 		}
@@ -219,8 +236,11 @@ elsif ( $opt{journey} ) {
 		else {
 			print('             ');
 		}
-		printf( "  %${max_name}s  %${max_platform}s\n",
+		printf( "  %-${max_name}s  %${max_platform}s\n",
 			$stop->name, $stop->platform // q{} );
+		if ( $stop == $mark_stop ) {
+			print($output_reset);
+		}
 	}
 	if ( $trip->messages ) {
 		say q{};
