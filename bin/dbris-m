@@ -14,6 +14,7 @@ use List::Util   qw(max);
 use Travel::Status::DE::DBRIS;
 
 my ( $date, $time );
+my $mots;
 my $developer_mode;
 my $show_jid;
 my $use_cache = 1;
@@ -31,15 +32,16 @@ my $output_bold  = -t STDOUT ? "\033[1m" : q{};
 my $output_reset = -t STDOUT ? "\033[0m" : q{};
 
 GetOptions(
-	'd|date=s'   => \$date,
-	'h|help'     => sub { show_help(0) },
-	'j|with-jid' => \$show_jid,
-	't|time=s'   => \$time,
-	'V|version'  => \&show_version,
-	'cache!'     => \$use_cache,
-	'devmode'    => \$developer_mode,
-	'json'       => \$json_output,
-	'raw-json'   => \$raw_json_output,
+	'd|date=s'             => \$date,
+	'h|help'               => sub { show_help(0) },
+	'j|with-jid'           => \$show_jid,
+	'm|modes-of-transit=s' => \$mots,
+	't|time=s'             => \$time,
+	'V|version'            => \&show_version,
+	'cache!'               => \$use_cache,
+	'devmode'              => \$developer_mode,
+	'json'                 => \$json_output,
+	'raw-json'             => \$raw_json_output,
 
 ) or show_help(1);
 
@@ -138,6 +140,10 @@ if ( $date or $time ) {
 		}
 	}
 	$opt{datetime} = $dt;
+}
+
+if ($mots) {
+	$opt{modes_of_transit} = [ split( qr{, *}, $mots ) ];
 }
 
 my $status = Travel::Status::DE::DBRIS->new(%opt);

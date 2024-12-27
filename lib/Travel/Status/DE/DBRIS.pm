@@ -49,6 +49,13 @@ sub new {
 	if ( my $station = $conf{station} ) {
 		my $dt = $conf{datetime}
 		  // DateTime->now( time_zone => 'Europe/Berlin' );
+		my @mots
+		  = (
+			qw(ICE EC_IC IR REGIONAL SBAHN BUS SCHIFF UBAHN TRAM ANRUFPFLICHTIG)
+		  );
+		if ( $conf{modes_of_transit} ) {
+			@mots = @{ $conf{modes_of_transit} // [] };
+		}
 		$req
 		  = 'https://www.bahn.de/web/api/reiseloesung/abfahrten'
 		  . '?datum='
@@ -59,12 +66,10 @@ sub new {
 		  . $station->{eva}
 		  . '&ortId='
 		  . $station->{id}
-		  . '&mitVias=true&maxVias=8'
-		  . '&verkehrsmittel[]=ICE&verkehrsmittel[]=EC_IC'
-		  . '&verkehrsmittel[]=IR&verkehrsmittel[]=REGIONAL'
-		  . '&verkehrsmittel[]=SBAHN&verkehrsmittel[]=BUS'
-		  . '&verkehrsmittel[]=SCHIFF&verkehrsmittel[]=UBAHN'
-		  . '&verkehrsmittel[]=TRAM&verkehrsmittel[]=ANRUFPFLICHTIG';
+		  . '&mitVias=true&maxVias=8';
+		for my $mot (@mots) {
+			$req .= '&verkehrsmittel[]=' . $mot;
+		}
 	}
 	elsif ( my $gs = $conf{geoSearch} ) {
 		my $lat = $gs->{latitude};
