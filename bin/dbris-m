@@ -189,6 +189,13 @@ sub display_occupancy {
 	return q{?};
 }
 
+sub format_occupancy {
+	my ($stop) = @_;
+
+	return display_occupancy( $stop->occupancy_first )
+	  . display_occupancy( $stop->occupancy_second );
+}
+
 sub format_delay {
 	my ( $delay, $len ) = @_;
 	if ( $delay and $len ) {
@@ -257,6 +264,7 @@ elsif ( $opt{journey} ) {
 	my $max_platform = max map { length( $_->platform // q{} ) } $trip->route;
 	my $max_delay
 	  = max map { $_->delay ? length( $_->delay ) + 3 : 0 } $trip->route;
+	my $max_occupancy = max map { $_->occupancy ? 2 : 0 } $trip->route;
 
 	my $mark_stop = 0;
 	my $now       = DateTime->now( time_zone => 'Europe/Berlin' );
@@ -298,6 +306,9 @@ elsif ( $opt{journey} ) {
 		}
 		printf( " %${max_delay}s",
 			format_delay( $stop->delay, $max_delay - 3 ) );
+		if ($max_occupancy) {
+			printf( "  %${max_occupancy}s", format_occupancy($stop) );
+		}
 		printf( "  %-${max_name}s  %${max_platform}s\n",
 			$stop->name, $stop->platform // q{} );
 		if ( $stop == $mark_stop ) {

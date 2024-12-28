@@ -11,6 +11,7 @@ our $VERSION = '0.01';
 Travel::Status::DE::DBRIS::Location->mk_ro_accessors(
 	qw(eva id lat lon name products type is_cancelled is_additional is_separation display_priority
 	  dep arr arr_delay dep_delay delay platform sched_platform rt_platform
+	  occupancy_first occupancy_second occupancy
 	)
 );
 
@@ -63,6 +64,26 @@ sub new {
 	}
 
 	$ref->{delay} = $ref->{arr_delay} // $ref->{dep_delay};
+
+	for my $occupancy ( @{ $json->{auslastungsmeldungen} // [] } ) {
+		if ( $occupancy->{klasse} eq 'KLASSE_1' ) {
+			$ref->{occupancy_first} = $occupancy->{stufe};
+		}
+		if ( $occupancy->{klasse} eq 'KLASSE_2' ) {
+			$ref->{occupancy_second} = $occupancy->{stufe};
+		}
+	}
+
+	if ( $ref->{occupancy_first} and $ref->{occupancy_second} ) {
+		$ref->{occupancy}
+		  = ( $ref->{occupancy_first} + $ref->{occupancy_second} ) / 2;
+	}
+	elsif ( $ref->{occupancy_first} ) {
+		$ref->{occupancy} = $ref->{occupancy_first};
+	}
+	elsif ( $ref->{occupancy_second} ) {
+		$ref->{occupancy} = $ref->{occupancy_second};
+	}
 
 	for my $message ( @{ $json->{priorisierteMeldungen} // [] } ) {
 		if ( $message->{type} and $message->{type} eq 'HALT_AUSFALL' ) {
