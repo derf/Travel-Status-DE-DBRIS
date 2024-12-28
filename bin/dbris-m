@@ -464,9 +464,6 @@ None.
 
 =item * This module is very much work-in-progress
 
-=item * At the moment, there is no way of getting journey IDs from the
-departure monitor, and thus no way to get departure details.
-
 =back
 
 =head1 AUTHOR
