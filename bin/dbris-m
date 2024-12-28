@@ -254,6 +254,8 @@ elsif ( $opt{journey} ) {
 
 	my $max_name     = max map { length( $_->name ) } $trip->route;
 	my $max_platform = max map { length( $_->platform // q{} ) } $trip->route;
+	my $max_delay
+	  = max map { $_->delay ? length( $_->delay ) + 3 : 0 } $trip->route;
 
 	my $mark_stop = 0;
 	my $now       = DateTime->now( time_zone => 'Europe/Berlin' );
@@ -293,6 +295,8 @@ elsif ( $opt{journey} ) {
 		else {
 			print('             ');
 		}
+		printf( " %${max_delay}s",
+			format_delay( $stop->delay, $max_delay - 3 ) );
 		printf( "  %-${max_name}s  %${max_platform}s\n",
 			$stop->name, $stop->platform // q{} );
 		if ( $stop == $mark_stop ) {

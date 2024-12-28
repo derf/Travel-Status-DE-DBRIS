@@ -10,7 +10,7 @@ our $VERSION = '0.01';
 
 Travel::Status::DE::DBRIS::Location->mk_ro_accessors(
 	qw(eva id lat lon name products type is_cancelled is_additional is_separation display_priority
-	  dep arr platform sched_platform rt_platform
+	  dep arr arr_delay dep_delay delay platform sched_platform rt_platform
 	)
 );
 
@@ -49,6 +49,20 @@ sub new {
 		$ref->{rt_arr}
 		  = $opt{strptime_obj}->parse_datetime( $json->{ezAnkunftsZeitpunkt} );
 	}
+
+	if ( $ref->{sched_dep} and $ref->{rt_dep} ) {
+		$ref->{dep_delay}
+		  = $ref->{rt_dep}->subtract_datetime( $ref->{sched_dep} )
+		  ->in_units('minutes');
+	}
+
+	if ( $ref->{sched_arr} and $ref->{rt_arr} ) {
+		$ref->{arr_delay}
+		  = $ref->{rt_arr}->subtract_datetime( $ref->{sched_arr} )
+		  ->in_units('minutes');
+	}
+
+	$ref->{delay} = $ref->{arr_delay} // $ref->{dep_delay};
 
 	for my $message ( @{ $json->{priorisierteMeldungen} // [] } ) {
 		if ( $message->{type} and $message->{type} eq 'HALT_AUSFALL' ) {
