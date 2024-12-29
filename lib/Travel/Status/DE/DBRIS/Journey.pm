@@ -33,6 +33,10 @@ sub new {
 		push( @{ $ref->{messages} }, $message );
 	}
 
+	for my $message ( @{ $json->{priorisierteMeldungen} // [] } ) {
+		push( @{ $ref->{messages} }, $message );
+	}
+
 	for my $attr ( @{ $json->{zugattribute} // [] } ) {
 		push( @{ $ref->{attributes} }, $attr );
 	}
