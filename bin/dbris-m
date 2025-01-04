@@ -84,6 +84,7 @@ elsif ( $opt{station} =~ m{[|]} ) {
 }
 elsif ( $opt{station} !~ m{ ^ \d+ $ }x ) {
 	my $status = Travel::Status::DE::DBRIS->new(
+		cache          => $cache,
 		locationSearch => $opt{station},
 		developer_mode => $developer_mode,
 	);
