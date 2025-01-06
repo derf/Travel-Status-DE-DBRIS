@@ -55,21 +55,6 @@ sub new {
 	return $ref;
 }
 
-sub route {
-	my ($self) = @_;
-
-	if ( $self->{route} ) {
-		return @{ $self->{route} };
-	}
-
-	@{ $self->{route} }
-	  = map { Travel::Status::DE::DBRIS::Location->new( json => $_ ) }
-	  ( @{ $self->{raw_route} // [] },
-		@{ $self->{raw_cancelled_route} // [] } );
-
-	return @{ $self->{route} };
-}
-
 sub messages {
 	my ($self) = @_;
 
