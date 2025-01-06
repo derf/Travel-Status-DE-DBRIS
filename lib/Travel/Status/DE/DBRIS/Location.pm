@@ -10,7 +10,8 @@ our $VERSION = '0.01';
 
 Travel::Status::DE::DBRIS::Location->mk_ro_accessors(
 	qw(eva id lat lon name products type is_cancelled is_additional is_separation display_priority
-	  dep arr arr_delay dep_delay delay platform sched_platform rt_platform
+	  dep arr sched_dep sched_arr rt_dep rt_arr arr_delay dep_delay delay
+	  platform sched_platform rt_platform
 	  occupancy_first occupancy_second occupancy
 	)
 );
