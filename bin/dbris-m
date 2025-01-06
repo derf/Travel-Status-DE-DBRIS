@@ -238,7 +238,11 @@ if ( $opt{station} ) {
 
 	$max_delay += 1;
 
-	for my $result ( $status->results ) {
+	my @results = map { $_->[1] }
+	  sort { $a->[0] <=> $b->[0] }
+	  map { [ ( $_->dep // $_->arr )->epoch, $_ ] } $status->results;
+
+	for my $result (@results) {
 		printf(
 			"%s  %s  %${max_line}s  %${max_dest}s  %${max_platform}s\n",
 			$result->is_cancelled ? '--:--' : $result->dep->strftime('%H:%M'),
