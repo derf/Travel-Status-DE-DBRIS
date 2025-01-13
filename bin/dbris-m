@@ -145,6 +145,16 @@ if ( $date or $time ) {
 	$opt{datetime} = $dt;
 }
 
+if ( $mots and $mots eq 'help' ) {
+	say "Supported modes of transmit (-m / --modes-of-transit):";
+	for my $mot (
+		qw(ICE EC_IC IR REGIONAL SBAHN BUS SCHIFF UBAHN TRAM ANRUFPFLICHTIG))
+	{
+		say $mot;
+	}
+	exit 0;
+}
+
 if ($mots) {
 	$opt{modes_of_transit} = [ split( qr{, *}, $mots ) ];
 }
@@ -433,6 +443,11 @@ B<dbris-m> invocations.
 Print result(s) as JSON and exit. This is a dump of internal data structures
 and not guaranteed to remain stable between minor versions. Please use the
 Travel::Status::DE::DBRIS(3pm) module if you need a proper API.
+
+=item B<-m>, B<--modes-of-transit> I<mot1>[,I<mot2>,...]
+
+Only return results for the specified modes of transit.
+Use C<<-m help>> to get a list of supported modes of transit.
 
 =item B<--no-cache>
 
