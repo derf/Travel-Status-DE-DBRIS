@@ -164,7 +164,8 @@ my $status = Travel::Status::DE::DBRIS->new(%opt);
 sub show_help {
 	my ($code) = @_;
 
-	print "Usage: db-ris-m [-j] <station|journeyID|lat:lon>\n"
+	print
+	  "Usage: dbris-m [-d dd.mm.yyy] [-t hh:mm] [-j] <stop|journeyID|lat:lon>\n"
 	  . "See also: man dbris-m\n";
 
 	exit $code;
