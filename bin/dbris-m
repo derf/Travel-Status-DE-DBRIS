@@ -200,6 +200,9 @@ sub display_occupancy {
 	if ( $occupancy == 4 ) {
 		return q{!};
 	}
+	if ( $occupancy == 99 ) {
+		return q{!};
+	}
 	return q{?};
 }
 
