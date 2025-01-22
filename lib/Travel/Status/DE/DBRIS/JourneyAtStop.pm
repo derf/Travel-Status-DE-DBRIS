@@ -66,6 +66,12 @@ sub TO_JSON {
 
 	my $ret = { %{$self} };
 
+	for my $k (qw(sched_dep rt_dep dep sched_arr rt_arr arr)) {
+		if ( $ret->{$k} ) {
+			$ret->{$k} = $ret->{$k}->epoch;
+		}
+	}
+
 	return $ret;
 }
 
