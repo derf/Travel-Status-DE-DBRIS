@@ -356,7 +356,12 @@ elsif ( $opt{journey} ) {
 		say q{};
 	}
 	for my $attr ( $trip->attributes ) {
-		say $attr->{value};
+		say $attr->{value}
+		  . (
+			$attr->{teilstreckenHinweis}
+			? q { } . $attr->{teilstreckenHinweis}
+			: q{}
+		  );
 	}
 	if ( $trip->messages ) {
 		say q{};
