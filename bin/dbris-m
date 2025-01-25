@@ -62,9 +62,15 @@ if ($use_cache) {
 	}
 }
 
+my ( $station, $train_type, $train_no ) = @ARGV;
+
+if ( not $station ) {
+	show_help(1);
+}
+
 my %opt = (
 	cache          => $cache,
-	station        => shift || show_help(1),
+	station        => $station,
 	developer_mode => $developer_mode,
 );
 
@@ -175,7 +181,44 @@ if ($mots) {
 	$opt{modes_of_transit} = [ grep { $known_mot{$_} } @mots ];
 }
 
-my $status = Travel::Status::DE::DBRIS->new(%opt);
+if ( $opt{station} and $train_type and $train_no ) {
+	my $dt = DateTime->now( time_zone => 'Europe/Berlin' )
+	  ->subtract( minutes => 15 );
+	my $status = Travel::Status::DE::DBRIS->new(
+		cache            => $cache,
+		datetime         => $opt{datetime} // $dt,
+		station          => $opt{station},
+		developer_mode   => $developer_mode,
+		modes_of_transit => [qw[ICE EC_IC IR REGIONAL SBAHN]],
+	);
+	my $found = 0;
+	for my $train ( $status->results ) {
+		if (
+			$train->train_short eq $train_type
+			and (  $train->maybe_train_no eq $train_no
+				or $train->maybe_line_no eq $train_no )
+		  )
+		{
+			$found = $train;
+			last;
+		}
+	}
+	if ($found) {
+		$opt{journey} = $found->id;
+		$train_no = {
+			eva          => $opt{station}->eva,
+			departure    => $found->dep,
+			train_type   => $found->train_short,
+			train_number => $found->maybe_train_no,
+		};
+		delete $opt{station};
+	}
+	else {
+		say STDERR "Did not find $train_type $train_no at "
+		  . $opt{station}->name;
+		exit 1;
+	}
+}
 
 sub show_help {
 	my ($code) = @_;
@@ -236,6 +279,8 @@ sub format_delay {
 	}
 	return q{};
 }
+
+my $status = Travel::Status::DE::DBRIS->new(%opt);
 
 if ( my $err = $status->errstr ) {
 	say STDERR "Request error: ${err}";
@@ -395,6 +440,8 @@ dbris-m - Interface to bahn.de public transit services
 
 B<dbris-m> [B<-d> I<DD.MM.YYYY>] [B<-t> I<HH:MM>] [B<-j>] I<station>
 
+B<dbris-m> I<station> I<train tpye> I<train number>
+
 B<dbris-m> I<JourneyID>
 
 B<dbris-m> B<?>I<query>|I<lat>B<:>I<lon>
@@ -432,6 +479,14 @@ station ID.  For each departure, B<dbris-m> shows
 =item * platform, if known.
 
 =back
+
+=head2 Trip details (I<station> I<train type> I<train number>)
+
+List intermediate stops of I<train type> I<train number> with arrival/departure
+time, delay (if available), occupancy (if available), and stop name. Also
+includes some generic trip information. Only works if the specified train
+passes I<station> in the next few dozen minutes or B<-d> / B<-t> have been
+set to appropriate values.
 
 =head2 Trip details (I<JourneyID>)
 
