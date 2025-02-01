@@ -558,9 +558,9 @@ dbris-m - Interface to bahn.de public transit services
 
 =head1 SYNOPSIS
 
-B<dbris-m> [B<-d> I<DD.MM.YYYY>] [B<-t> I<HH:MM>] [B<-j>] I<station>
+B<dbris-m> [B<-d> I<DD.MM.>] [B<-t> I<HH:MM>] [B<-j>] [I<opt>] I<station>
 
-B<dbris-m> I<station> I<train tpye> I<train number>
+B<dbris-m> [I<opt>] I<station> I<train type> I<train number>
 
 B<dbris-m> I<JourneyID>
 
@@ -602,11 +602,11 @@ station ID.  For each departure, B<dbris-m> shows
 
 =head2 Trip details (I<station> I<train type> I<train number>)
 
-List intermediate stops of I<train type> I<train number> with arrival/departure
-time, delay (if available), occupancy (if available), and stop name. Also
-includes some generic trip information. Only works if the specified train
-passes I<station> in the next few dozen minutes or B<-d> / B<-t> have been
-set to appropriate values.
+Show trip details and carriage formation of I<train type> I<train number> at
+I<station>, if available. Includes everything that is available via
+I<JourneyID> (see below). The train must pass I<station> within the next
+60-or-so minutes; use B<-d> and/or B<-t> to adjust the requested timestamp if
+needed.
 
 =head2 Trip details (I<JourneyID>)
 
