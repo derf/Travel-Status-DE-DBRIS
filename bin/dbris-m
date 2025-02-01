@@ -445,6 +445,12 @@ if ($train_no) {
 
 	my $wr = $status->result;
 
+	if ( not $wr ) {
+		say STDERR
+"Carriage formation for $train_type $train_no->{train_number} at $station is not available";
+		exit 1;
+	}
+
 	printf(
 		"\n%s → %s\n",
 		join( ' / ',
