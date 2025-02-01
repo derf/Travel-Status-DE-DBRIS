@@ -176,12 +176,13 @@ if ($mots) {
 		if ( not $known_mot{$mot} ) {
 			$found_unknown = 1;
 			say STDERR
-"-m / --modes-of-transit: skipping unknown mode of transit '$mot'";
+			  "-m / --modes-of-transit: unknown mode of transit '$mot'";
 		}
 	}
 	if ($found_unknown) {
 		say STDERR 'supported modes of transit are: '
 		  . join( q{, }, sort keys %known_mot );
+		exit 1;
 	}
 	$opt{modes_of_transit} = [ grep { $known_mot{$_} } @mots ];
 }
