@@ -19,7 +19,7 @@ use Travel::Status::DE::DBRIS::JourneyAtStop;
 use Travel::Status::DE::DBRIS::Journey;
 use Travel::Status::DE::DBRIS::Location;
 
-our $VERSION = '0.02';
+our $VERSION = '0.03';
 
 # {{{ Constructors
 
@@ -411,7 +411,7 @@ Non-blocking variant;
 
 =head1 VERSION
 
-version 0.02
+version 0.03
 
 =head1 DESCRIPTION
 
