@@ -80,6 +80,14 @@ sub TO_JSON {
 
 	my $ret = { %{$self} };
 
+	delete $ret->{strptime_obj};
+
+	for my $k (qw(day)) {
+		if ( $ret->{$k} ) {
+			$ret->{$k} = $ret->{$k}->epoch;
+		}
+	}
+
 	return $ret;
 }
 
