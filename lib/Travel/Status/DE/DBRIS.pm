@@ -186,7 +186,7 @@ sub new_p {
 	my $self = $obj->new( %conf, async => 1 );
 	$self->{promise} = $conf{promise};
 
-	$self->get_with_cache_p( $self->{url} )->then(
+	$self->get_with_cache_p( $self->{req} )->then(
 		sub {
 			my ($content) = @_;
 			$self->{raw_json} = $self->{json}->decode($content);
@@ -203,8 +203,12 @@ sub new_p {
 			elsif ( $conf{formation} ) {
 				$self->parse_formation( $conf{formation} );
 			}
+
+			if ( $self->errstr ) {
+				$promise->reject( $self->errstr, $self );
+			}
 			else {
-				$promise->reject( 'dead code path reached in new_p', $self );
+				$promise->resolve($self);
 			}
 			return;
 		}
