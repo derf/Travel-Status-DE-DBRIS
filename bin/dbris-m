@@ -94,6 +94,12 @@ elsif ( $opt{station} =~ m{[|]} ) {
 	$opt{journey} = $opt{station};
 	delete $opt{station};
 }
+elsif ( $opt{station} =~ m{ [@] L = (?<eva> \d+ ) [@] }x ) {
+	$opt{station} = {
+		eva => $+{eva},
+		id  => $opt{station},
+	};
+}
 elsif ( $opt{station} !~ m{ ^ \d+ $ }x ) {
 	my $status = Travel::Status::DE::DBRIS->new(
 		cache          => $cache,
