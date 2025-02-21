@@ -107,7 +107,7 @@ sub new {
 	}
 	else {
 		confess(
-			'station / geoSearch  / locationSearch / journey must be specified'
+'station / formation / geoSearch  / locationSearch / journey must be specified'
 		);
 	}
 
@@ -172,10 +172,15 @@ sub new_p {
 
 	if (
 		not(   $conf{station}
-			or $conf{geoSearch} )
+			or $conf{formation}
+			or $conf{geoSearch}
+			or $conf{locationSearch}
+			or $conf{journey} )
 	  )
 	{
-		return $promise->reject('station / geoSearch flag must be passed');
+		return $promise->reject(
+			'station / geoSearch / locationSearch / journey flag must be passed'
+		);
 	}
 
 	my $self = $obj->new( %conf, async => 1 );
@@ -185,14 +190,21 @@ sub new_p {
 		sub {
 			my ($content) = @_;
 			$self->{raw_json} = $self->{json}->decode($content);
+
 			if ( $conf{station} ) {
 				$self->parse_stationboard;
+			}
+			elsif ( $conf{journey} ) {
+				$self->parse_journey;
 			}
 			elsif ( $conf{geoSearch} or $conf{locationSearch} ) {
 				$self->parse_search;
 			}
+			elsif ( $conf{formation} ) {
+				$self->parse_formation( $conf{formation} );
+			}
 			else {
-				$promise->resolve($self);
+				$promise->reject( 'dead code path reached in new_p', $self );
 			}
 			return;
 		}
