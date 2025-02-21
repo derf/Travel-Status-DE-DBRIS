@@ -188,14 +188,13 @@ if ($mots) {
 }
 
 if ( $opt{station} and $train_type and $train_no ) {
-	my $dt = DateTime->now( time_zone => 'Europe/Berlin' )
-	  ->subtract( minutes => 15 );
 	my $status = Travel::Status::DE::DBRIS->new(
 		cache            => $cache,
-		datetime         => $opt{datetime} // $dt,
+		datetime         => $opt{datetime},
 		station          => $opt{station},
 		developer_mode   => $developer_mode,
-		modes_of_transit => [qw[ICE EC_IC IR REGIONAL SBAHN]],
+		modes_of_transit => $opt{modes_of_transit}
+		  // [qw[ICE EC_IC IR REGIONAL SBAHN]],
 	);
 	my $found = 0;
 	for my $train ( $status->results ) {
