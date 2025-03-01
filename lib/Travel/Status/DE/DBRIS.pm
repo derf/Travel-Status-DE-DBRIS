@@ -25,7 +25,6 @@ our $VERSION = '0.05';
 
 sub new {
 	my ( $obj, %conf ) = @_;
-	my $service = $conf{service};
 
 	my $ua = $conf{user_agent};
 
@@ -431,8 +430,8 @@ version 0.05
 
 =head1 DESCRIPTION
 
-Travel::Status::DE::DBRIS is an unofficial interface to bahn.de and bahnhof.de
-APIs.
+Travel::Status::DE::DBRIS is an unofficial interface to bahn.de departure
+monitor and train information APIs.
 
 =head1 METHODS
 
@@ -444,14 +443,17 @@ Requests item(s) as specified by I<opt> and returns a new
 Travel::Status::DE::DBRIS element with the results.  Dies if the wrong
 I<opt> were passed.
 
-I<opt> must contain either a B<station>, B<geoSearch>, or B<locationSearch> flag:
+I<opt> must contain exactly one of the following keys:
 
 =over
 
-=item B<station> => I<station>
+=item B<station> => I<$location>
 
-Request station board (departures) for I<station>, e.g. 8000080 for Dortmund
-Hbf. Results are available via C<< $status->results >>.
+Request station board (departures) for the station specified by I<$location>,
+which must be either a Travel::Status::DE::DBRIS::Location(3pm) instance or a
+hashref containing B<{> B<eva> => I<eva>, B<id> => I<id> B<}>.
+Use B<geoSearch> or B<locatiorSearch> to obtain a location.
+Results are available via C<< $status->results >>.
 
 =item B<geoSearch> => B<{> B<latitude> => I<latitude>, B<longitude> => I<longitude> B<}>
 
@@ -464,10 +466,20 @@ Search for stations whose name is equal or similar to I<query>. Results are
 available via C<< $status->results >> and include the station ID needed for
 station board requests.
 
+=item B<journey> => I<journeyID>
+
+Request trip details for I<journeyID>.
+The result is available via C<< $status->result >>.
+
+=item B<formation> => B<{> B<eva> => I<eva>, B<train_type> => I<type>, B<train_number> => I<number> B<}>
+
+Request carriage formation of train I<type> I<number> at I<eva>.
+The result is available via C<< $status->result >>.
+
 =back
 
-The following optional flags may be set.
-Values in brackets indicate flags that are only relevant in certain request
+The following optional keys may be set.
+Values in brackets indicate keys that are only relevant in certain request
 modes, e.g. geoSearch or station.
 
 =over
@@ -481,6 +493,29 @@ configured for an expiry of one to two minutes.
 
 Passed on to C<< LWP::UserAgent->new >>. Defaults to C<< { timeout => 10 } >>,
 you can use an empty hashref to unset the default.
+
+=item B<modes_of_transit> => I<\@arrayref> (station)
+
+Only consider the modes of transit given in I<arrayref> when listing
+departures. Accepted modes of transit are:
+ICE,
+EC_IC,
+IR,
+REGIONAL,
+SBAHN,
+BUS,
+SCHIFF,
+UBAHN,
+TRAM,
+ANRUFPFLICHTIG.
+
+By default, Travel::Status::DE::DBRIS considers all modes of transit.
+
+=item B<json> => I<\%json>
+
+Do not perform a request to bahn.de; load the prepared response provided in
+I<json> instead. Note that you still need to specify B<station>, B<journey>,
+etc. as appropriate.
 
 =back
 
@@ -512,15 +547,21 @@ Mojo::UserAgent(3pm).
 In case of a fatal HTTP request or backend error, returns a string describing
 it. Returns undef otherwise.
 
-=item $status->results
+=item $status->results (station, locationSearch, geoSearch)
 
 Returns a list of Travel::Status::DE::DBRIS::Location(3pm) or Travel::Status::DE::DBRIS::JourneyAtStop(3pm) objects, depending on the arguments passed to B<new>.
+
+=item $status->result (journey, formation)
+
+Return a Travel::Status::DE::DBRIS::Journey(3pm) or Travel::Status::DE::DBRIS::Formation(3pm) object, depending on the arguments passed to B<new>.
 
 =back
 
 =head1 DIAGNOSTICS
 
-None.
+Calling B<new> or B<new_p> with the B<developer_mode> key set to a true value
+causes this module to print bahn.de requests and responses on the standard
+output.
 
 =head1 DEPENDENCIES
 
@@ -528,7 +569,7 @@ None.
 
 =item * DateTime(3pm)
 
-=item * List::Util(3pm)
+=item * DateTime::Format::Strptime(3pm)
 
 =item * LWP::UserAgent(3pm)
 
