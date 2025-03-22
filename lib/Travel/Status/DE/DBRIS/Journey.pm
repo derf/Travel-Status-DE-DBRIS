@@ -78,6 +78,9 @@ sub messages {
 sub TO_JSON {
 	my ($self) = @_;
 
+	# transform raw_route into route (lazy accessor)
+	$self->route;
+
 	my $ret = { %{$self} };
 
 	delete $ret->{strptime_obj};
