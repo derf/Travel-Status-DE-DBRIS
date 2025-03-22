@@ -24,6 +24,7 @@ sub new {
 		train        => $json->{zugName},
 		is_cancelled => $json->{cancelled},
 		raw_route    => $json->{halte},
+		raw_polyline => $json->{polylineGroup}{polylineDescriptions},
 		strptime_obj => $strptime,
 	};
 
@@ -42,6 +43,59 @@ sub new {
 	}
 
 	return $ref;
+}
+
+sub polyline {
+	my ($self) = @_;
+
+	if ( not $self->{raw_polyline} ) {
+		return;
+	}
+
+	if ( $self->{polyline} ) {
+		return @{ $self->{polyline} };
+	}
+
+	my $distance;
+	my $polyline = [ map { { lon => $_->{lng}, lat => $_->{lat} } }
+		  @{ $self->{raw_polyline}[0]{coordinates} } ];
+
+	eval {
+		require GIS::Distance;
+		$distance = GIS::Distance->new;
+	};
+
+	if ($distance) {
+		my %min_dist;
+		for my $stop ( $self->route ) {
+			for my $polyline_index ( 0 .. $#{$polyline} ) {
+				my $pl = $polyline->[$polyline_index];
+				my $dist
+				  = $distance->distance_metal( $stop->{lat}, $stop->{lon},
+					$pl->{lat}, $pl->{lon} );
+				if ( not $min_dist{ $stop->{eva} }
+					or $min_dist{ $stop->{eva} }{dist} > $dist )
+				{
+					$min_dist{ $stop->{eva} } = {
+						dist  => $dist,
+						index => $polyline_index,
+					};
+				}
+			}
+		}
+		for my $stop ( $self->route ) {
+			if ( $min_dist{ $stop->{eva} } ) {
+				$polyline->[ $min_dist{ $stop->{eva} }{index} ]{name}
+				  = $stop->{name};
+				$polyline->[ $min_dist{ $stop->{eva} }{index} ]{eva}
+				  = $stop->{eva};
+			}
+		}
+	}
+
+	$self->{polyline} = $polyline;
+
+	return @{ $self->{polyline} };
 }
 
 sub route {
@@ -80,6 +134,9 @@ sub TO_JSON {
 
 	# transform raw_route into route (lazy accessor)
 	$self->route;
+
+	# transform raw_polyline into polyline (lazy accessor)
+	$self->polyline;
 
 	my $ret = { %{$self} };
 
