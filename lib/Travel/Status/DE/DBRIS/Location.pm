@@ -21,11 +21,18 @@ sub new {
 
 	my $json = $opt{json};
 
+	# station search results include lat/lon keys in JSON; route entries do not
+	my ( $lon, $lat );
+	if ( $json->{id} =~ m{ [@]X= (?<lon> \d+) [@]Y= (?<lat> \d+) }x ) {
+		$lat = $+{lat} / 1e6;
+		$lon = $+{lon} / 1e6;
+	}
+
 	my $ref = {
 		eva            => $json->{extId} // $json->{evaNumber},
 		id             => $json->{id},
-		lat            => $json->{lat},
-		lon            => $json->{lon},
+		lat            => $json->{lat} // $lat,
+		lon            => $json->{lon} // $lon,
 		name           => $json->{name},
 		products       => $json->{products},
 		type           => $json->{type},
