@@ -19,7 +19,7 @@ my $developer_mode;
 my $show_jid;
 my $use_cache = 1;
 my $cache;
-my ( $json_output, $raw_json_output );
+my ( $json_output, $raw_json_output, $with_polyline );
 
 my %known_mot = map { $_ => 1 }
   (qw(ICE EC_IC IR REGIONAL SBAHN BUS SCHIFF UBAHN TRAM ANRUFPFLICHTIG));
@@ -48,6 +48,7 @@ GetOptions(
 	'devmode'              => \$developer_mode,
 	'json'                 => \$json_output,
 	'raw-json'             => \$raw_json_output,
+	'with-polyline'        => \$with_polyline,
 
 ) or show_help(1);
 
@@ -91,7 +92,8 @@ elsif ( $opt{station} =~ m{ ^ [?] (?<query> .*) $ }x ) {
 	delete $opt{station};
 }
 elsif ( $opt{station} =~ m{[|]} ) {
-	$opt{journey} = $opt{station};
+	$opt{journey}       = $opt{station};
+	$opt{with_polyline} = $with_polyline;
 	delete $opt{station};
 }
 elsif ( $opt{station} =~ m{ [@] L = (?<eva> \d+ ) [@] }x ) {
@@ -674,6 +676,11 @@ Default: now.
 =item B<-V>, B<--version>
 
 Show version information and exit.
+
+=item B<--with-polyline> (trip details)
+
+Request polyline (geocoordinates of the trip's route) from the backend.
+Only sensible when combined with B<--json> or B<--raw-json>.
 
 =back
 
