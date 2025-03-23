@@ -85,10 +85,8 @@ sub polyline {
 		}
 		for my $stop ( $self->route ) {
 			if ( $min_dist{ $stop->{eva} } ) {
-				$polyline->[ $min_dist{ $stop->{eva} }{index} ]{name}
-				  = $stop->{name};
-				$polyline->[ $min_dist{ $stop->{eva} }{index} ]{eva}
-				  = $stop->{eva};
+				$polyline->[ $min_dist{ $stop->{eva} }{index} ]{stop}
+				  = $stop;
 			}
 		}
 	}
