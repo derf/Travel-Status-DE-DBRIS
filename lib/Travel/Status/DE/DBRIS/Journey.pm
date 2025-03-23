@@ -10,7 +10,8 @@ use Travel::Status::DE::DBRIS::Location;
 
 our $VERSION = '0.06';
 
-Travel::Status::DE::DBRIS::Journey->mk_ro_accessors(qw(day train is_cancelled));
+Travel::Status::DE::DBRIS::Journey->mk_ro_accessors(
+	qw(day train type number is_cancelled));
 
 sub new {
 	my ( $obj, %opt ) = @_;
@@ -27,6 +28,10 @@ sub new {
 		raw_polyline => $json->{polylineGroup}{polylineDescriptions},
 		strptime_obj => $strptime,
 	};
+
+	# Number is either train no (ICE, RE) or line no (S, U, Bus, ...)
+	# with no way of distinguishing between those
+	( $ref->{type}, $ref->{number} ) = split( qr{\s+}, $ref->{train} );
 
 	bless( $ref, $obj );
 
