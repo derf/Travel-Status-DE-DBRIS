@@ -318,7 +318,8 @@ if ($json_output) {
 if ( $opt{station} ) {
 	my $max_line = max map { length( $_->line ) } $status->results;
 	my $max_dest
-	  = max map { length( $_->destination // q{} ) } $status->results;
+	  = max map { length( $_->destination // $_->via_last // q{} ) }
+	  $status->results;
 	my $max_delay = max map { length( $_->delay // q{} ) } $status->results;
 	my $max_platform
 	  = max map { length( $_->rt_platform // $_->platform // q{} ) }
