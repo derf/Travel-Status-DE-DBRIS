@@ -11,7 +11,7 @@ use Travel::Status::DE::DBRIS::Location;
 our $VERSION = '0.09';
 
 Travel::Status::DE::DBRIS::Journey->mk_ro_accessors(
-	qw(day id train type number is_cancelled));
+	qw(day id train train_no type number is_cancelled));
 
 sub new {
 	my ( $obj, %opt ) = @_;
@@ -29,6 +29,10 @@ sub new {
 		raw_polyline => $json->{polylineGroup}{polylineDescriptions},
 		strptime_obj => $strptime,
 	};
+
+	if ( $json->{halte} and @{ $json->{halte} } ) {
+		$ref->{train_no} = $json->{halte}[0]{nummer};
+	}
 
 	# Number is either train no (ICE, RE) or line no (S, U, Bus, ...)
 	# with no way of distinguishing between those
