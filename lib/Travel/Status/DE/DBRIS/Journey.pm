@@ -11,7 +11,7 @@ use Travel::Status::DE::DBRIS::Location;
 our $VERSION = '0.09';
 
 Travel::Status::DE::DBRIS::Journey->mk_ro_accessors(
-	qw(day id train train_no type number is_cancelled));
+	qw(day id train train_no line_no type number is_cancelled));
 
 sub new {
 	my ( $obj, %opt ) = @_;
@@ -45,6 +45,10 @@ sub new {
 		and $opt{id} =~ m{ [#] ZE [#] (?<line> [^#]+ ) [#] ZB [#] }x )
 	{
 		$ref->{number} = $+{line};
+	}
+
+	if (defined $ref->{number} and defined $ref->{train_no} and $ref->{number} ne $ref->{train_no}) {
+		$ref->{line_no} = $ref->{number};
 	}
 
 	bless( $ref, $obj );
