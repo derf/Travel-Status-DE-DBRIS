@@ -388,7 +388,7 @@ elsif ( $opt{journey} ) {
 	}
 
 	printf( "%s %s am %s\n\n",
-		$trip->train, $trip->train_no, $trip->day->strftime('%d.%m.%Y') );
+		$trip->type, $trip->train_no, $trip->day->strftime('%d.%m.%Y') );
 
 	for my $stop ( $trip->route ) {
 		if ( $stop == $mark_stop ) {
