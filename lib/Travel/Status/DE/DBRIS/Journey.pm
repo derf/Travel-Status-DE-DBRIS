@@ -42,6 +42,14 @@ sub new {
 		( $ref->{type}, $ref->{number} ) = split( qr{\s+}, $ref->{train} );
 	}
 
+	# For some trains, the train type also contains the train number like "MEX19161"
+	# If we can detect this, remove the number from the train type
+	if ( $ref->{train_no} and $ref->{type}
+		and $ref->{type} =~ qr{ (?<actualtype> [^\d]+ ) $ref->{train_no} $ }x )
+	{
+		$ref->{type} = $+{actualtype};
+	}
+
 	# The line number seems to be encoded in the trip ID
 	if ( not defined $ref->{number}
 		and $opt{id} =~ m{ [#] ZE [#] (?<line> [^#]+ ) [#] ZB [#] }x )
