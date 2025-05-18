@@ -311,12 +311,12 @@ if ( my $err = $status->errstr ) {
 	exit 2;
 }
 
-if ($raw_json_output) {
+if ( $raw_json_output and not $train_no ) {
 	say JSON->new->convert_blessed->encode( $status->{raw_json} );
 	exit 0;
 }
 
-if ($json_output) {
+if ( $json_output and not $train_no ) {
 	if ( $opt{journey} ) {
 		say JSON->new->convert_blessed->encode( $status->result );
 	}
@@ -364,7 +364,7 @@ if ( $opt{station} ) {
 		}
 	}
 }
-elsif ( $opt{journey} ) {
+elsif ( $opt{journey} and not( $raw_json_output or $json_output ) ) {
 	my $trip = $status->result;
 
 	my $max_name     = max map { length( $_->name ) } $trip->route;
@@ -462,6 +462,21 @@ if ($train_no) {
 		developer_mode => $developer_mode,
 		formation      => $train_no
 	);
+
+	if ($raw_json_output) {
+		say JSON->new->convert_blessed->encode( $status->{raw_json} );
+		exit 0;
+	}
+
+	if ($json_output) {
+		if ( $opt{journey} ) {
+			say JSON->new->convert_blessed->encode( $status->result );
+		}
+		else {
+			say JSON->new->convert_blessed->encode( [ $status->results ] );
+		}
+		exit 0;
+	}
 
 	my $wr = $status->result;
 
