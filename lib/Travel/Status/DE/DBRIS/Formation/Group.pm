@@ -292,8 +292,8 @@ my %ice_name = (
 my %model_name = (
 	'011'      => [ 'ICE T', 'ÖBB 4011' ],
 	'023'      => [ 'CFL KISS', 'CFL 2300'],
-	'401'      => ['ICE 1'],
-	'402'      => ['ICE 2'],
+	'401'      => [ 'ICE 1',        'BR 401' ],
+	'402'      => [ 'ICE 2',        'BR 402' ],
 	'403.S1'   => [ 'ICE 3',        'BR 403, 1. Serie' ],
 	'403.S2'   => [ 'ICE 3',        'BR 403, 2. Serie' ],
 	'403.R'    => [ 'ICE 3',        'BR 403 Redesign' ],
@@ -303,16 +303,17 @@ my %model_name = (
 	'408'      => [ 'ICE 3neo',     'BR 408' ],
 	'411.S1'   => [ 'ICE T',        'BR 411, 1. Serie' ],
 	'411.S2'   => [ 'ICE T',        'BR 411, 2. Serie' ],
-	'412'      => ['ICE 4'],
-	'415'      => [ 'ICE T', 'BR 415' ],
-	'420'      => ['BR 420'],
-	'422'      => ['BR 422'],
-	'423'      => ['BR 423'],
-	'425'      => ['BR 425'],
+	'412'      => [ 'ICE 4',        'BR 412' ],
+	'415'      => [ 'ICE T',        'BR 415' ],
+	'420'      => [ 'BR 420' ],
+	'422'      => [ 'BR 422' ],
+	'423'      => [ 'BR 423' ],
+	'424'      => [ 'BR 424' ],
+	'425'      => [ 'BR 425' ],
 	'427'      => [ 'FLIRT', 'BR 427' ],
 	'428'      => [ 'FLIRT', 'BR 428' ],
 	'429'      => [ 'FLIRT', 'BR 429' ],
-	'430'      => ['BR 430'],
+	'430'      => [ 'BR 430' ],
 	'440'      => [ 'Coradia Continental', 'BR 440' ],
 	'442'      => [ 'Talent 2',            'BR 442' ],
 	'445'      => [ 'Twindexx Vario',      'BR 445' ],
@@ -320,6 +321,7 @@ my %model_name = (
 	'462'      => [ 'Desiro HC',           'BR 462' ],
 	'463'      => [ 'Mireo',               'BR 463' ],
 	'475'      => [ 'TGV',                 'BR 475' ],
+	'563'      => [ 'Mireo Plus B',        'BR 563' ],
 	'612'      => [ 'RegioSwinger',        'BR 612' ],
 	'620'      => [ 'LINT 81',             'BR 620' ],
 	'622'      => [ 'LINT 54',             'BR 622' ],
@@ -331,8 +333,9 @@ my %model_name = (
 	'643'      => [ 'TALENT',              'BR 643' ],
 	'644'      => [ 'TALENT',              'BR 644' ],
 	'648'      => [ 'LINT 41',             'BR 648' ],
-	'IC2.TWIN' => ['IC 2 Twindexx'],
-	'IC2.KISS' => ['IC 2 KISS'],
+	'650'      => [ 'Regio-Shuttle RS1',   'BR 650' ],
+	'IC2.TWIN' => [ 'IC 2 Twindexx' ],
+	'IC2.KISS' => [ 'IC 2 KISS' ],
 );
 
 my %power_desc = (
@@ -437,6 +440,7 @@ sub parse_model {
 		'420'      => 0,
 		'422'      => 0,
 		'423'      => 0,
+		'424'      => 0,
 		'425'      => 0,
 		'427'      => 0,
 		'428'      => 0,
@@ -449,6 +453,7 @@ sub parse_model {
 		'462'      => 0,
 		'463'      => 0,
 		'475'      => 0,
+		'563'      => 0,
 		'612'      => 0,
 		'620'      => 0,
 		'622'      => 0,
@@ -460,6 +465,7 @@ sub parse_model {
 		'643'      => 0,
 		'644'      => 0,
 		'648'      => 0,
+		'650'      => 0,
 		'IC2.TWIN' => 0,
 		'IC2.KISS' => 0,
 	);
@@ -470,10 +476,11 @@ sub parse_model {
 		if ( not $carriage->model ) {
 			next;
 		}
+
 		if ( $carriage->model == 023 ) {
 			$ml{'023'}++;
 		}
-		if ( $carriage->model == 401
+		elsif ( $carriage->model == 401
         	or ( $carriage->model >= 801 and $carriage->model <= 804 ) )
         {
         	$ml{'401'}++;
@@ -527,6 +534,9 @@ sub parse_model {
 		elsif ( $carriage->model == 423 or $carriage->model == 433 ) {
 			$ml{'423'}++;
 		}
+		elsif ( $carriage->model == 424 or $carriage->model == 434 ) {
+        	$ml{'424'}++;
+        }
 		elsif ( $carriage->model == 425 or $carriage->model == 435 ) {
 			$ml{'425'}++;
 		}
@@ -572,6 +582,9 @@ sub parse_model {
 		elsif ( $carriage->model == 475 ) {
 			$ml{'475'}++;
 		}
+	    elsif ( $carriage->model == 563 ) {
+        	$ml{'563'}++;
+        }
 		elsif ( $carriage->model == 612 ) {
 			$ml{'612'}++;
 		}
@@ -605,6 +618,9 @@ sub parse_model {
 		elsif ( $carriage->model == 648 ) {
 			$ml{'648'}++;
 		}
+		elsif ( $carriage->model == 650 ) {
+        	$ml{'650'}++;
+        }
 		elsif ( $self->train_type eq 'IC' and $carriage->model == 110 ) {
 			$ml{'IC2.KISS'}++;
 		}
