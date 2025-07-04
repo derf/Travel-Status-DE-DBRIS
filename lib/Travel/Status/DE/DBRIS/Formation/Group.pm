@@ -280,6 +280,7 @@ my %ice_name = (
 	9202 => 'Schleswig-Holstein',
 	9208 => 'Nationalpark Bayrischer Wald',
 	9212 => 'Fan-Hauptstadt Hamburg',
+        9234 => 'Ruhr',
 	9237 => 'Spree',
 	9457 => 'Bundesrepublik Deutschland',
 	9481 => 'Rheinland-Pfalz'
