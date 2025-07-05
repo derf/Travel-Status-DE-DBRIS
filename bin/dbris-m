@@ -107,7 +107,7 @@ elsif ( $opt{station} =~ m{[|]} ) {
 	$opt{with_polyline} = $with_polyline;
 	delete $opt{station};
 }
-elsif ( $opt{station} =~ m{ [@] L = (?<eva> \d+ ) [@] }x ) {
+elsif ( $opt{station} =~ m{ [@] L = (?<eva> \d+ ) }x ) {
 	$opt{station} = {
 		eva => $+{eva},
 		id  => $opt{station},
