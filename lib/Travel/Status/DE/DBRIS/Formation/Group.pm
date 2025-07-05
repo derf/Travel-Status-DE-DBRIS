@@ -636,12 +636,19 @@ sub parse_model {
 	my @likelihood = reverse sort { $ml{$a} <=> $ml{$b} } keys %ml;
 
 	# Less than two carriages are generally inconclusive.
-	# Exception: BR 631 (Link I) only has a single carriage
+	# Exceptions: BR 631 (Link I), 640 (LINT 27, 650 (RS1)
+	# only have a single carriage
 	if (
 		$ml{ $likelihood[0] } < 2
-		and not($likelihood[0] eq '631'
+		and not(
+			(
+				   $likelihood[0] eq '631'
+				or $likelihood[0] eq '640'
+				or $likelihood[0] eq '650'
+			)
 			and @carriages == 1
-			and substr( $carriages[0]->uic_id, 0, 2 ) eq '95' )
+			and substr( $carriages[0]->uic_id, 0, 2 ) eq '95'
+		)
 	  )
 	{
 		$self->{subtype} = undef;
