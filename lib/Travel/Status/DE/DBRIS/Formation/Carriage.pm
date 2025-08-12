@@ -99,7 +99,9 @@ sub new {
 	  = ( $pos->{start} - $platform->{start} ) * 100 / $platform_length,
 	  $ref->{end_percent}
 	  = ( $pos->{end} - $platform->{start} ) * 100 / $platform_length,
-	  $ref->{length_meters} = $pos->{start} - $pos->{end};
+	  if ( defined $pos->{start} and defined $pos->{end} ) {
+		$ref->{length_meters} = $pos->{start} - $pos->{end};
+	}
 	$ref->{length_percent} = $ref->{end_percent} - $ref->{start_percent};
 
 	if (   $pos->{start} eq ''
