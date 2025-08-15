@@ -278,6 +278,7 @@ my %ice_name = (
 	9046 => 'Female ICE',
 	9050 => 'Metropole Ruhr',
 	9202 => 'Schleswig-Holstein',
+    9205 => 'Biosphärengebiet Schwäbische Alb',
 	9208 => 'Nationalpark Bayrischer Wald',
 	9212 => 'Fan-Hauptstadt Hamburg',
 	9234 => 'Ruhr',
