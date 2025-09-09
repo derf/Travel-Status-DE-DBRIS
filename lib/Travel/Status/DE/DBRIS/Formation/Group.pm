@@ -277,14 +277,17 @@ my %ice_name = (
 	9041 => 'Baden-Württemberg',
 	9046 => 'Female ICE',
 	9050 => 'Metropole Ruhr',
+    9201 => 'Hannover',
 	9202 => 'Schleswig-Holstein',
+    9203 => 'Stendal',
     9205 => 'Biosphärengebiet Schwäbische Alb',
 	9208 => 'Nationalpark Bayrischer Wald',
 	9234 => 'Ruhr',
 	9237 => 'Spree',
 	9457 => 'Bundesrepublik Deutschland',
 	9481 => 'Rheinland-Pfalz',
-    9485 => 'Karriere-ICE'
+    9485 => 'Karriere-ICE',
+	9488 => 'Würzburg'
 );
 
 # }}}
