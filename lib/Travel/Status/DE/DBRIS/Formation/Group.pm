@@ -8,7 +8,7 @@ use utf8;
 use parent 'Class::Accessor';
 use List::Util qw(uniq);
 
-our $VERSION = '0.11';
+our $VERSION = '0.13';
 
 Travel::Status::DE::DBRIS::Formation::Group->mk_ro_accessors(
 	qw(designation name train_no train_type description desc_short destination has_sectors model series start_percent end_percent)
@@ -277,12 +277,17 @@ my %ice_name = (
 	9041 => 'Baden-Württemberg',
 	9046 => 'Female ICE',
 	9050 => 'Metropole Ruhr',
+    9201 => 'Hannover',
 	9202 => 'Schleswig-Holstein',
+    9203 => 'Stendal',
+    9205 => 'Biosphärengebiet Schwäbische Alb',
 	9208 => 'Nationalpark Bayrischer Wald',
-	9212 => 'Fan-Hauptstadt Hamburg',
+	9234 => 'Ruhr',
 	9237 => 'Spree',
 	9457 => 'Bundesrepublik Deutschland',
-	9481 => 'Rheinland-Pfalz'
+	9481 => 'Rheinland-Pfalz',
+    9485 => 'Karriere-ICE',
+	9488 => 'Würzburg'
 );
 
 # }}}
@@ -290,8 +295,8 @@ my %ice_name = (
 # {{{ Rolling Stock Models
 
 my %model_name = (
-	'011'      => [ 'ICE T', 'ÖBB 4011' ],
-	'023'      => [ 'CFL KISS', 'CFL 2300'],
+	'011'      => [ 'ICE T',        'ÖBB 4011' ],
+	'023'      => [ 'CFL KISS',     'CFL 2300' ],
 	'401'      => [ 'ICE 1',        'BR 401' ],
 	'402'      => [ 'ICE 2',        'BR 402' ],
 	'403.S1'   => [ 'ICE 3',        'BR 403, 1. Serie' ],
@@ -305,15 +310,15 @@ my %model_name = (
 	'411.S2'   => [ 'ICE T',        'BR 411, 2. Serie' ],
 	'412'      => [ 'ICE 4',        'BR 412' ],
 	'415'      => [ 'ICE T',        'BR 415' ],
-	'420'      => [ 'BR 420' ],
-	'422'      => [ 'BR 422' ],
-	'423'      => [ 'BR 423' ],
-	'424'      => [ 'BR 424' ],
-	'425'      => [ 'BR 425' ],
+	'420'      => ['BR 420'],
+	'422'      => ['BR 422'],
+	'423'      => ['BR 423'],
+	'424'      => ['BR 424'],
+	'425'      => ['BR 425'],
 	'427'      => [ 'FLIRT', 'BR 427' ],
 	'428'      => [ 'FLIRT', 'BR 428' ],
 	'429'      => [ 'FLIRT', 'BR 429' ],
-	'430'      => [ 'BR 430' ],
+	'430'      => ['BR 430'],
 	'440'      => [ 'Coradia Continental', 'BR 440' ],
 	'442'      => [ 'Talent 2',            'BR 442' ],
 	'445'      => [ 'Twindexx Vario',      'BR 445' ],
@@ -334,8 +339,8 @@ my %model_name = (
 	'644'      => [ 'TALENT',              'BR 644' ],
 	'648'      => [ 'LINT 41',             'BR 648' ],
 	'650'      => [ 'Regio-Shuttle RS1',   'BR 650' ],
-	'IC2.TWIN' => [ 'IC 2 Twindexx' ],
-	'IC2.KISS' => [ 'IC 2 KISS' ],
+	'IC2.TWIN' => ['IC 2 Twindexx'],
+	'IC2.KISS' => ['IC 2 KISS'],
 );
 
 my %power_desc = (
@@ -481,10 +486,10 @@ sub parse_model {
 			$ml{'023'}++;
 		}
 		elsif ( $carriage->model == 401
-        	or ( $carriage->model >= 801 and $carriage->model <= 804 ) )
-        {
-        	$ml{'401'}++;
-        }
+			or ( $carriage->model >= 801 and $carriage->model <= 804 ) )
+		{
+			$ml{'401'}++;
+		}
 		elsif ( $carriage->model == 402
 			or ( $carriage->model >= 805 and $carriage->model <= 808 ) )
 		{
@@ -535,8 +540,8 @@ sub parse_model {
 			$ml{'423'}++;
 		}
 		elsif ( $carriage->model == 424 or $carriage->model == 434 ) {
-        	$ml{'424'}++;
-        }
+			$ml{'424'}++;
+		}
 		elsif ( $carriage->model == 425 or $carriage->model == 435 ) {
 			$ml{'425'}++;
 		}
@@ -582,9 +587,9 @@ sub parse_model {
 		elsif ( $carriage->model == 475 ) {
 			$ml{'475'}++;
 		}
-	    elsif ( $carriage->model == 563 ) {
-        	$ml{'563'}++;
-        }
+		elsif ( $carriage->model == 563 ) {
+			$ml{'563'}++;
+		}
 		elsif ( $carriage->model == 612 ) {
 			$ml{'612'}++;
 		}
@@ -619,8 +624,8 @@ sub parse_model {
 			$ml{'648'}++;
 		}
 		elsif ( $carriage->model == 650 ) {
-        	$ml{'650'}++;
-        }
+			$ml{'650'}++;
+		}
 		elsif ( $self->train_type eq 'IC' and $carriage->model == 110 ) {
 			$ml{'IC2.KISS'}++;
 		}
@@ -635,12 +640,19 @@ sub parse_model {
 	my @likelihood = reverse sort { $ml{$a} <=> $ml{$b} } keys %ml;
 
 	# Less than two carriages are generally inconclusive.
-	# Exception: BR 631 (Link I) only has a single carriage
+	# Exceptions: BR 631 (Link I), 640 (LINT 27, 650 (RS1)
+	# only have a single carriage
 	if (
 		$ml{ $likelihood[0] } < 2
-		and not($likelihood[0] eq '631'
+		and not(
+			(
+				   $likelihood[0] eq '631'
+				or $likelihood[0] eq '640'
+				or $likelihood[0] eq '650'
+			)
 			and @carriages == 1
-			and substr( $carriages[0]->uic_id, 0, 2 ) eq '95' )
+			and substr( $carriages[0]->uic_id, 0, 2 ) eq '95'
+		)
 	  )
 	{
 		$self->{subtype} = undef;
