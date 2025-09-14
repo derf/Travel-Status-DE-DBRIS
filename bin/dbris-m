@@ -388,7 +388,9 @@ elsif ( $opt{journey} and not( $raw_json_output or $json_output ) ) {
 	}
 
 	printf( "%s %s am %s\n\n",
-		$trip->type, $trip->train_no, $trip->day->strftime('%d.%m.%Y') );
+		$trip->type,
+		$trip->train_no // $trip->number,
+		$trip->day->strftime('%d.%m.%Y') );
 
 	for my $stop ( $trip->route ) {
 		if ( $stop == $mark_stop ) {
