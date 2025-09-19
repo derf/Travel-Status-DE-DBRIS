@@ -126,7 +126,9 @@ else {
 	my $found;
 	for my $result ( $status->results ) {
 		if ( defined $result->eva ) {
-			if ( lc( $result->name ) ne lc( $opt{station} ) ) {
+			if ( lc( $result->name ) ne lc( $opt{station} )
+				and not( $json_output or $raw_json_output ) )
+			{
 				say $result->name;
 			}
 			$opt{station} = $result;
