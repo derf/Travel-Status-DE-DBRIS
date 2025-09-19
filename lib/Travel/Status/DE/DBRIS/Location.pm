@@ -97,6 +97,9 @@ sub new {
 		if ( $message->{type} and $message->{type} eq 'HALT_AUSFALL' ) {
 			$ref->{is_cancelled} = 1;
 		}
+		elsif ( $message->{text} and $message->{text} eq 'Zusatzhalt' ) {
+			$ref->{is_additional} = 1;
+		}
 		push( @{ $ref->{messages} }, $message );
 	}
 
