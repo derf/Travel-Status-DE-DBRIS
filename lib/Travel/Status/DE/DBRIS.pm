@@ -36,6 +36,7 @@ sub new {
 
 	my $self = {
 		cache          => $conf{cache},
+		failure_cache  => $conf{failure_cache},
 		developer_mode => $conf{developer_mode},
 		messages       => [],
 		results        => [],
@@ -227,15 +228,26 @@ sub new_p {
 
 sub get_with_cache {
 	my ( $self, $url ) = @_;
-	my $cache = $self->{cache};
+	my $cache         = $self->{cache};
+	my $failure_cache = $self->{failure_cache};
 
 	if ( $self->{developer_mode} ) {
 		say "GET $url";
 	}
 
+	if ($failure_cache) {
+		if ( my $content = $cache->thaw($url) ) {
+			if ( ${$content} =~ s{ ^ n : }{}x ) {
+				if ( $self->{developer_mode} ) {
+					say "  cached failure: ${$content}";
+				}
+				return ( undef, ${$content} );
+			}
+		}
+	}
+
 	if ($cache) {
-		my $content = $cache->thaw($url);
-		if ($content) {
+		if ( my $content = $cache->thaw($url) ) {
 			if ( $self->{developer_mode} ) {
 				say '  cache hit';
 			}
@@ -250,6 +262,13 @@ sub get_with_cache {
 	my $reply = $self->{ua}->get($url);
 
 	if ( $reply->is_error ) {
+		if ( $self->{developer_mode} ) {
+			say '  request failed: ' . $reply->status_line;
+		}
+		if ($failure_cache) {
+			my $err = 'n:' . $reply->status_line;
+			$failure_cache->freeze( $url, \$err );
+		}
 		return ( undef, $reply->status_line );
 	}
 	my $content = $reply->content;
@@ -263,13 +282,25 @@ sub get_with_cache {
 
 sub get_with_cache_p {
 	my ( $self, $url ) = @_;
-	my $cache = $self->{cache};
+	my $cache         = $self->{cache};
+	my $failure_cache = $self->{failure_cache};
 
 	if ( $self->{developer_mode} ) {
 		say "GET $url";
 	}
 
 	my $promise = $self->{promise}->new;
+
+	if ($failure_cache) {
+		if ( my $content = $cache->thaw($url) ) {
+			if ( ${$content} =~ s{ ^ n : }{}x ) {
+				if ( $self->{developer_mode} ) {
+					say "  cached failure: ${$content}";
+				}
+				return $promise->reject( ${$content} );
+			}
+		}
+	}
 
 	if ($cache) {
 		my $content = $cache->thaw($url);
@@ -289,6 +320,13 @@ sub get_with_cache_p {
 		sub {
 			my ($tx) = @_;
 			if ( my $err = $tx->error ) {
+				if ( $self->{developer_mode} ) {
+					say "  request failed: $err";
+				}
+				if ($failure_cache) {
+					my $cached_err = 'n:' . $err;
+					$failure_cache->freeze( $url, \$cached_err );
+				}
 				$promise->reject(
 					"GET $url returned HTTP $err->{code} $err->{message}");
 				return;
@@ -303,6 +341,13 @@ sub get_with_cache_p {
 	)->catch(
 		sub {
 			my ($err) = @_;
+			if ( $self->{developer_mode} ) {
+				say "  request failed: ${err}";
+			}
+			if ($failure_cache) {
+				my $cached_err = 'n:' . $err;
+				$failure_cache->freeze( $url, \$cached_err );
+			}
 			$promise->reject($err);
 			return;
 		}
@@ -488,8 +533,20 @@ modes, e.g. geoSearch or station.
 
 =item B<cache> => I<$obj>
 
-A Cache::File(3pm) object used to cache realtime data requests. It should be
-configured for an expiry of one to two minutes.
+A Cache::File(3pm) object used to cache realtime data requests. Will be used to
+associate HTTP URLs with raw JSON output as returned by bahn.de. The object
+should be configured for an expiry of one to two minutes.
+
+=item B<failure_cache> => I<$obj>
+
+A Cache::File(3pm) object used to cache failed requests. Will be used to
+associate HTTP URLs with the string C<< n >>, indicating a failed request.
+The object should be configured for an expiry of one to two minutes.
+May be identical with the I<$obj> specified as B<cache>.
+
+Careful: setting this will cause both (possibly permanent) HTTP failure codes
+and (likely ephemeral) failed connection attempts (e.g. timeouts due to spotty
+network reception) to be cached.
 
 =item B<lwp_options> => I<\%hashref>
 
