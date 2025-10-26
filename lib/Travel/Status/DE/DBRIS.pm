@@ -472,10 +472,11 @@ station board requests.
 Request trip details for I<journeyID>.
 The result is available via C<< $status->result >>.
 
-=item B<formation> => B<{> B<eva> => I<eva>, B<train_type> => I<type>, B<train_number> => I<number> B<}>
+=item B<formation> => B<{> B<eva> => I<eva>, B<train_type> => I<type>, B<train_number> => I<number>, B<departure> => I<datetime> B<}>
 
-Request carriage formation of train I<type> I<number> at I<eva>.
-The result is available via C<< $status->result >>.
+Request carriage formation of train I<type> I<number>, scheduled to depart from
+I<eva> at I<datetime>. I<eva> is an eva number as returned by, e.g.,
+C<< $location->eva >>. The result is available via C<< $status->result >>.
 
 =back
 
