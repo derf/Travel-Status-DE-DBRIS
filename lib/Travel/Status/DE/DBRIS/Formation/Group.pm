@@ -297,6 +297,7 @@ my %ice_name = (
 my %model_name = (
 	'011'      => [ 'ICE T',        'ÖBB 4011' ],
 	'023'      => [ 'CFL KISS',     'CFL 2300' ],
+	'091'      => [ 'ICE L' ],
 	'401'      => [ 'ICE 1',        'BR 401' ],
 	'402'      => [ 'ICE 2',        'BR 402' ],
 	'403.S1'   => [ 'ICE 3',        'BR 403, 1. Serie' ],
@@ -310,15 +311,15 @@ my %model_name = (
 	'411.S2'   => [ 'ICE T',        'BR 411, 2. Serie' ],
 	'412'      => [ 'ICE 4',        'BR 412' ],
 	'415'      => [ 'ICE T',        'BR 415' ],
-	'420'      => ['BR 420'],
-	'422'      => ['BR 422'],
-	'423'      => ['BR 423'],
-	'424'      => ['BR 424'],
-	'425'      => ['BR 425'],
+	'420'      => [ 'BR 420' ],
+	'422'      => [ 'BR 422' ],
+	'423'      => [ 'BR 423' ],
+	'424'      => [ 'BR 424' ],
+	'425'      => [ 'BR 425' ],
 	'427'      => [ 'FLIRT', 'BR 427' ],
 	'428'      => [ 'FLIRT', 'BR 428' ],
 	'429'      => [ 'FLIRT', 'BR 429' ],
-	'430'      => ['BR 430'],
+	'430'      => [ 'BR 430' ],
 	'440'      => [ 'Coradia Continental', 'BR 440' ],
 	'442'      => [ 'Talent 2',            'BR 442' ],
 	'445'      => [ 'Twindexx Vario',      'BR 445' ],
@@ -339,8 +340,8 @@ my %model_name = (
 	'644'      => [ 'TALENT',              'BR 644' ],
 	'648'      => [ 'LINT 41',             'BR 648' ],
 	'650'      => [ 'Regio-Shuttle RS1',   'BR 650' ],
-	'IC2.TWIN' => ['IC 2 Twindexx'],
-	'IC2.KISS' => ['IC 2 KISS'],
+	'IC2.TWIN' => [ 'IC 2 Twindexx' ],
+	'IC2.KISS' => [ 'IC 2 KISS' ],
 );
 
 my %power_desc = (
@@ -433,6 +434,7 @@ sub parse_model {
 	my %ml = (
 		'011'      => 0,
 		'023'      => 0,
+		'091'      => 0,
 		'401'      => 0,
 		'402'      => 0,
 		'403.S1'   => 0,
@@ -488,6 +490,13 @@ sub parse_model {
 		if ( $carriage->model == 023 ) {
 			$ml{'023'}++;
 		}
+		elsif ( $carriage->model == 091
+             or $carriage->model == 491
+             or $carriage->model == 791
+             or $carriage->model == 891 )
+        {
+           	$ml{'091'}++;
+        }
 		elsif ( $carriage->model == 401
 			or ( $carriage->model >= 801 and $carriage->model <= 804 ) )
 		{
