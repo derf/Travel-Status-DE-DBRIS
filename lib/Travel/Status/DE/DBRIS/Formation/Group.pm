@@ -331,6 +331,7 @@ my %model_name = (
 	'612'      => [ 'RegioSwinger',        'BR 612' ],
 	'620'      => [ 'LINT 81',             'BR 620' ],
 	'622'      => [ 'LINT 54',             'BR 622' ],
+	'623'      => [ 'LINT 41',             'BR 623' ],
 	'631'      => [ 'Link I',              'BR 631' ],
 	'632'      => [ 'Link II',             'BR 632' ],
 	'633'      => [ 'Link III',            'BR 633' ],
@@ -467,6 +468,7 @@ sub parse_model {
 		'612'      => 0,
 		'620'      => 0,
 		'622'      => 0,
+		'623'      => 0,
 		'631'      => 0,
 		'632'      => 0,
 		'633'      => 0,
@@ -611,6 +613,9 @@ sub parse_model {
 		elsif ( $carriage->model == 622 ) {
 			$ml{'622'}++;
 		}
+		elsif ( $carriage->model == 623 ) {
+        	$ml{'623'}++;
+        }
 		elsif ( $carriage->model == 631 ) {
 			$ml{'631'}++;
 		}
