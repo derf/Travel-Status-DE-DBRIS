@@ -489,7 +489,7 @@ sub parse_model {
 			next;
 		}
 
-		if ( $carriage->model == 023 ) {
+		if ( $carriage->model == 23 ) {
 			$ml{'023'}++;
 		}
 		elsif ($carriage->model == 91
