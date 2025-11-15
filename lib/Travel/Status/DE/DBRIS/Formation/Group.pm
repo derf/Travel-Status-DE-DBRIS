@@ -492,7 +492,7 @@ sub parse_model {
 		if ( $carriage->model == 023 ) {
 			$ml{'023'}++;
 		}
-		elsif ($carriage->model == 091
+		elsif ($carriage->model == 91
 			or $carriage->model == 491
 			or $carriage->model == 791
 			or $carriage->model == 891 )
