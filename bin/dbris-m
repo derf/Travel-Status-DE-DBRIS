@@ -389,10 +389,15 @@ elsif ( $opt{journey} and not( $raw_json_output or $json_output ) ) {
 		}
 	}
 
-	printf( "%s %s am %s\n\n",
+	printf( "%s %s am %s\n",
 		$trip->type,
 		$trip->train_no // $trip->number,
 		$trip->day->strftime('%d.%m.%Y') );
+
+	if ( $trip->admin_ids ) {
+		printf( "Betrieb: %s\n", join( q{, }, $trip->admin_ids ) );
+	}
+	say q{};
 
 	for my $stop ( $trip->route ) {
 		if ( $stop == $mark_stop ) {
