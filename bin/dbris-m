@@ -394,8 +394,8 @@ elsif ( $opt{journey} and not( $raw_json_output or $json_output ) ) {
 		$trip->train_no // $trip->number,
 		$trip->day->strftime('%d.%m.%Y') );
 
-	if ( $trip->admin_ids ) {
-		printf( "Betrieb: %s\n", join( q{, }, $trip->admin_ids ) );
+	if ( $trip->operators ) {
+		printf( "Betrieb: %s\n", join( q{, }, $trip->operators ) );
 	}
 	say q{};
 

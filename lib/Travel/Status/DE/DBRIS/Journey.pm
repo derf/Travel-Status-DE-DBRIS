@@ -7,13 +7,15 @@ use 5.020;
 use parent 'Class::Accessor';
 
 use Travel::Status::DE::DBRIS::Location;
+use Travel::Status::DE::DBRIS::Operators;
 
 our $VERSION = '0.16';
 
 # ->number is deprecated
 # TODO: Rename ->train, ->train_no to ->trip, ->trip_no
 Travel::Status::DE::DBRIS::Journey->mk_ro_accessors(
-	qw(admin_id day id train train_no line_no type number is_cancelled));
+	qw(admin_id day id train train_no line_no type number operator is_cancelled)
+);
 
 sub new {
 	my ( $obj, %opt ) = @_;
@@ -52,10 +54,24 @@ sub new {
 			if ( defined( my $admin_id = $admin_id_ml{ $admin_id_argmax[0] } ) )
 			{
 				$ref->{admin_id} = $admin_id;
+				if (
+					my $op
+					= Travel::Status::DE::DBRIS::Operators::get_operator_name(
+						$admin_id)
+				  )
+				{
+					$ref->{operator} = $admin_id;
+				}
 			}
 
 			# return most frequent admin ID first
 			$ref->{admin_ids} = \@admin_id_argmax;
+			$ref->{operators} = [
+				map {
+					Travel::Status::DE::DBRIS::Operators::get_operator_name($_)
+					  // $_
+				} @admin_id_argmax
+			];
 		}
 
 		if (%trip_no_ml) {
@@ -202,6 +218,12 @@ sub admin_ids {
 	return @{ $self->{admin_ids} // [] };
 }
 
+sub operators {
+	my ($self) = @_;
+
+	return @{ $self->{operators} // [] };
+}
+
 sub TO_JSON {
 	my ($self) = @_;
 
@@ -273,6 +295,16 @@ majority of stops.
 
 List of strings indirectly identifying the operators of the journey, in
 descending order of the number of stops they are responsible for.
+
+=item $journey->operator
+
+String naming the operator of the journey.  In case there are mulitple
+operators, returns the one responsible for the majority of stops.
+
+=item $journey->operators
+
+List of strings naming the operators of the journey, in descending order of the
+number of stops they are responsible for.
 
 =item $journey->train
 
