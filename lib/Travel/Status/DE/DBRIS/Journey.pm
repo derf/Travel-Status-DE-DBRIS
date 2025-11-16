@@ -76,7 +76,8 @@ sub new {
 			my @trip_no_argmax
 			  = reverse sort { $trip_no_ml{$a} <=> $trip_no_ml{$b} }
 			  keys %trip_no_ml;
-			$ref->{train_no} = $trip_no_argmax[0];
+			$ref->{train_no}     = $trip_no_argmax[0];
+			$ref->{trip_numbers} = \@trip_no_argmax;
 		}
 	}
 
@@ -218,6 +219,12 @@ sub operators {
 	my ($self) = @_;
 
 	return @{ $self->{operators} // [] };
+}
+
+sub trip_numbers {
+	my ($self) = @_;
+
+	return @{ $self->{trip_numbers} // [] };
 }
 
 sub TO_JSON {
