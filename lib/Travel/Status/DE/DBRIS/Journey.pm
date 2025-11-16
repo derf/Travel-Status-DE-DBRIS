@@ -51,17 +51,15 @@ sub new {
 			my @admin_id_argmax
 			  = reverse sort { $admin_id_ml{$a} <=> $admin_id_ml{$b} }
 			  keys %admin_id_ml;
-			if ( defined( my $admin_id = $admin_id_ml{ $admin_id_argmax[0] } ) )
+			$ref->{admin_id} = $admin_id_argmax[0];
+			if (
+				my $op
+				= Travel::Status::DE::DBRIS::Operators::get_operator_name(
+					$ref->{admin_id}
+				)
+			  )
 			{
-				$ref->{admin_id} = $admin_id;
-				if (
-					my $op
-					= Travel::Status::DE::DBRIS::Operators::get_operator_name(
-						$admin_id)
-				  )
-				{
-					$ref->{operator} = $admin_id;
-				}
+				$ref->{operator} = $op;
 			}
 
 			# return most frequent admin ID first
@@ -78,9 +76,7 @@ sub new {
 			my @trip_no_argmax
 			  = reverse sort { $trip_no_ml{$a} <=> $trip_no_ml{$b} }
 			  keys %trip_no_ml;
-			if ( defined( my $trip_no = $trip_no_ml{ $trip_no_argmax[0] } ) ) {
-				$ref->{train_no_no} = $trip_no;
-			}
+			$ref->{train_no} = $trip_no_argmax[0];
 		}
 	}
 
