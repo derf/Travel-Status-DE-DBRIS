@@ -227,6 +227,21 @@ sub trip_numbers {
 	return @{ $self->{trip_numbers} // [] };
 }
 
+sub trip_no_at {
+	my ( $self, $loc, $ts ) = @_;
+	for my $stop ( $self->route ) {
+		if ( $stop->name eq $loc or $stop->eva eq $loc ) {
+			if (   not defined $ts
+				or not( $stop->sched_dep // $stop->sched_arr )
+				or ( $stop->sched_dep // $stop->sched_arr )->epoch == $ts )
+			{
+				return $stop->trip_no;
+			}
+		}
+	}
+	return;
+}
+
 sub TO_JSON {
 	my ($self) = @_;
 
@@ -317,6 +332,13 @@ Textual description of the departure, typically consisting of type identifier
 =item $journey->train_no
 
 Trip number, if available. undef otherwise.
+
+=item $journey->trip_no_at($stop, $epoch)
+
+Return trip number at I<$stop> (name or EVA ID), if available.  Optionally,
+I<$epoch> can be used to only match stops where scheduled departure or arrival
+is equal to I<$epoch>. This is useful in case a trip passes the same stop
+multiple times.
 
 =item $journey->line_no
 
