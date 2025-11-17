@@ -188,7 +188,11 @@ sub route {
 	@{ $self->{route} }
 	  = map {
 		Travel::Status::DE::DBRIS::Location->new(
-			json         => $_,
+			json     => $_,
+			operator =>
+			  scalar Travel::Status::DE::DBRIS::Operators::get_operator_name(
+				$_->{adminID}
+			  ),
 			strptime_obj => $self->{strptime_obj}
 		)
 	  } ( @{ $self->{raw_route} // [] },
