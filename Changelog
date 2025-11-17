@@ -1,3 +1,10 @@
+Travel::Status::DE::DBRIS 0.18 - Mon Nov 17 2025
+
+    * dbris-m: Show trip number changes along the route, if any
+    * Journey: Fix ->operator and ->train_no accessors
+    * Journey: New accessors: trip_numbers, trip_no_at
+    * Location: New accessor: trip_no
+
 Travel::Status::DE::DBRIS 0.17 - Sun Nov 16 2025
 
     * Journey: New accessors: admin_id, admin_ids, operator, operators
