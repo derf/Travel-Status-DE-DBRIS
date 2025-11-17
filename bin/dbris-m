@@ -401,7 +401,7 @@ elsif ( $opt{journey} and not( $raw_json_output or $json_output ) ) {
 
 	my $prev_trip_no;
 	if ( scalar $trip->trip_numbers > 1 ) {
-		$prev_trip_no = $trip->train_no;
+		$prev_trip_no = q{};
 	}
 
 	for my $stop ( $trip->route ) {
