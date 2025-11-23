@@ -12,10 +12,8 @@ use Travel::Status::DE::DBRIS::Operators;
 our $VERSION = '0.18';
 
 # ->number is deprecated
-# TODO: Rename ->train, ->train_no to ->trip, ->trip_no
 Travel::Status::DE::DBRIS::Journey->mk_ro_accessors(
-	qw(admin_id day id train train_no line_no type number operator is_cancelled)
-);
+	qw(admin_id day id trip trip_no line_no type number operator is_cancelled));
 
 sub new {
 	my ( $obj, %opt ) = @_;
@@ -27,7 +25,7 @@ sub new {
 	my $ref = {
 		id           => $opt{id},
 		day          => $strpdate->parse_datetime( $json->{reisetag} ),
-		train        => $json->{zugName},
+		trip         => $json->{zugName},
 		is_cancelled => $json->{cancelled},
 		raw_route    => $json->{halte},
 		raw_polyline => $json->{polylineGroup}{polylineDescriptions},
@@ -76,22 +74,22 @@ sub new {
 			my @trip_no_argmax
 			  = reverse sort { $trip_no_ml{$a} <=> $trip_no_ml{$b} }
 			  keys %trip_no_ml;
-			$ref->{train_no}     = $trip_no_argmax[0];
+			$ref->{trip_no}      = $trip_no_argmax[0];
 			$ref->{trip_numbers} = \@trip_no_argmax;
 		}
 	}
 
 	# Number is either train no (ICE, RE) or line no (S, U, Bus, ...)
 	# with no way of distinguishing between those
-	if ( $ref->{train} ) {
-		( $ref->{type}, $ref->{number} ) = split( qr{\s+}, $ref->{train} );
+	if ( $ref->{trip} ) {
+		( $ref->{type}, $ref->{number} ) = split( qr{\s+}, $ref->{trip} );
 	}
 
-	# For some trains, the train type also contains the train number like "MEX19161"
-	# If we can detect this, remove the number from the train type
-	if (    $ref->{train_no}
+	# For some trips, the type also contains the trip number like "MEX19161"
+	# If we can detect this, remove the number from the trip type
+	if (    $ref->{trip_no}
 		and $ref->{type}
-		and $ref->{type} =~ qr{ (?<actualtype> [^\d]+ ) $ref->{train_no} $ }x )
+		and $ref->{type} =~ qr{ (?<actualtype> [^\d]+ ) $ref->{trip_no} $ }x )
 	{
 		$ref->{type} = $+{actualtype};
 	}
@@ -104,8 +102,8 @@ sub new {
 	}
 
 	if (    defined $ref->{number}
-		and defined $ref->{train_no}
-		and $ref->{number} ne $ref->{train_no} )
+		and defined $ref->{trip_no}
+		and $ref->{number} ne $ref->{trip_no} )
 	{
 		$ref->{line_no} = $ref->{number};
 	}
@@ -244,6 +242,22 @@ sub trip_no_at {
 		}
 	}
 	return;
+}
+
+sub train {
+	my ($self) = @_;
+
+	warn('$journey->train accessor is deprecated; use ->trip instead');
+
+	return $self->trip;
+}
+
+sub train_no {
+	my ($self) = @_;
+
+	warn('$journey->train_no accessor is deprecated; use ->trip_no instead');
+
+	return $self->trip_no;
 }
 
 sub TO_JSON {
