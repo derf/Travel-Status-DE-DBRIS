@@ -9,7 +9,7 @@ use utf8;
 use DateTime;
 use Encode qw(decode);
 use JSON;
-use Getopt::Long qw(:config no_ignore_case);
+use Getopt::Long qw(:config no_ignore_case bundling);
 use List::Util   qw(min max);
 use Travel::Status::DE::DBRIS;
 
@@ -21,6 +21,8 @@ my $use_cache = 1;
 my $cache;
 my $use_colour = 'auto';
 my ( $json_output, $raw_json_output, $with_polyline );
+my @output_args;
+my %show_output;
 
 my %known_mot = map { $_ => 1 }
   (qw(ICE EC_IC IR REGIONAL SBAHN BUS SCHIFF UBAHN TRAM ANRUFPFLICHTIG));
@@ -43,6 +45,7 @@ GetOptions(
 	'h|help'               => sub { show_help(0) },
 	'j|with-jid'           => \$show_jid,
 	'm|modes-of-transit=s' => \$mots,
+	'O|output=s@'          => \@output_args,
 	't|time=s'             => \$time,
 	'V|version'            => \&show_version,
 	'cache!'               => \$use_cache,
@@ -83,6 +86,15 @@ my ( $station, $train_type, $train_no ) = @ARGV;
 
 if ( not $station ) {
 	show_help(1);
+}
+
+# Support for --output=arg1,arg2
+for my $field ( split( qr{,}, join( q{,}, @output_args ) ) ) {
+	if    ( $field eq 'a' ) { $show_output{route_after} = 1 }
+	elsif ( $field eq 'r' ) { $show_output{route}       = 1 }
+	else {
+		$show_output{$field} = 1;
+	}
 }
 
 my %opt = (
@@ -357,6 +369,13 @@ if ( $opt{station} ) {
 		);
 		if ($show_jid) {
 			say $result->id =~ s{ }{}gr;
+		}
+		if ( $show_output{route} or $show_output{route_after} ) {
+			my @via = $result->via;
+			if ( @via and $via[-1] eq $result->destination ) {
+				pop(@via);
+			}
+			printf( "  via  %s\n", join( q{ · }, @via ) );
 		}
 		for my $message ( $result->messages ) {
 			say $message->{text};
