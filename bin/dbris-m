@@ -23,6 +23,7 @@ my $use_colour = 'auto';
 my ( $json_output, $raw_json_output, $with_polyline );
 my @output_args;
 my %show_output;
+my $num_route_entries = 3;
 
 my %known_mot = map { $_ => 1 }
   (qw(ICE EC_IC IR REGIONAL SBAHN BUS SCHIFF UBAHN TRAM ANRUFPFLICHTIG));
@@ -54,6 +55,7 @@ GetOptions(
 	'devmode'              => \$developer_mode,
 	'json'                 => \$json_output,
 	'raw-json'             => \$raw_json_output,
+	'route-entries=i'      => \$num_route_entries,
 	'with-polyline'        => \$with_polyline,
 
 ) or show_help(1);
@@ -97,9 +99,13 @@ for my $field ( split( qr{,}, join( q{,}, @output_args ) ) ) {
 	}
 }
 
+# the "via"s reported by the backend typically include both the current stop
+# and the terminus. So we requist $num_route_entries + 2 stops to ensure that
+# we end up with at least $num_route_entries usable stops.
 my %opt = (
 	cache          => $cache,
 	station        => $station,
+	num_vias       => $num_route_entries + 2,
 	developer_mode => $developer_mode,
 );
 

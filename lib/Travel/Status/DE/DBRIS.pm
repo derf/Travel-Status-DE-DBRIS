@@ -68,7 +68,8 @@ sub new {
 		  . $station->{eva}
 		  . '&ortId='
 		  . $station->{id}
-		  . '&mitVias=true&maxVias=8';
+		  . '&mitVias=true&maxVias='
+		  . ( $conf{num_vias} // 5 );
 		for my $mot (@mots) {
 			$req .= '&verkehrsmittel[]=' . $mot;
 		}
