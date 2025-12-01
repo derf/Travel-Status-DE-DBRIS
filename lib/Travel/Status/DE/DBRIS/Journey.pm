@@ -93,7 +93,14 @@ sub new {
 	# Number is either train no (ICE, RE) or line no (S, U, Bus, ...)
 	# with no way of distinguishing between those
 	if ( $ref->{trip} ) {
-		$ref->{number} = ( split( qr{\s+}, $ref->{trip} ) )[-1];
+		my @trip_parts = split( qr{\s+}, $ref->{trip} );
+		if ( not defined $ref->{type} ) {
+			$ref->{type} = $trip_parts[0];
+		}
+		$ref->{number} = $trip_parts[-1];
+		if ( not defined $ref->{trip_no} ) {
+			$ref->{trip_no} = $ref->{number};
+		}
 	}
 
 	# For some trips, the type also contains the trip number like "MEX19161"
@@ -232,6 +239,12 @@ sub operators {
 	my ($self) = @_;
 
 	return @{ $self->{operators} // [] };
+}
+
+sub types {
+	my ($self) = @_;
+
+	return @{ $self->{types} // [] };
 }
 
 sub trip_numbers {
