@@ -35,6 +35,7 @@ sub new {
 	if ( $json->{halte} and @{ $json->{halte} } ) {
 		my %admin_id_ml;
 		my %trip_no_ml;
+		my %type_ml;
 
 		for my $stop ( @{ $json->{halte} } ) {
 			if ( defined $stop->{adminID} ) {
@@ -42,6 +43,9 @@ sub new {
 			}
 			if ( defined $stop->{nummer} ) {
 				$trip_no_ml{ $stop->{nummer} } += 1;
+			}
+			if ( defined $stop->{kategorie} ) {
+				$type_ml{ $stop->{kategorie} } += 1;
 			}
 		}
 
@@ -70,6 +74,13 @@ sub new {
 			];
 		}
 
+		if (%type_ml) {
+			my @type_argmax
+			  = reverse sort { $type_ml{$a} <=> $type_ml{$b} } keys %type_ml;
+			$ref->{type}  = $type_argmax[0];
+			$ref->{types} = \@type_argmax;
+		}
+
 		if (%trip_no_ml) {
 			my @trip_no_argmax
 			  = reverse sort { $trip_no_ml{$a} <=> $trip_no_ml{$b} }
@@ -82,14 +93,14 @@ sub new {
 	# Number is either train no (ICE, RE) or line no (S, U, Bus, ...)
 	# with no way of distinguishing between those
 	if ( $ref->{trip} ) {
-		( $ref->{type}, $ref->{number} ) = split( qr{\s+}, $ref->{trip} );
+		$ref->{number} = ( split( qr{\s+}, $ref->{trip} ) )[-1];
 	}
 
 	# For some trips, the type also contains the trip number like "MEX19161"
 	# If we can detect this, remove the number from the trip type
 	if (    $ref->{trip_no}
 		and $ref->{type}
-		and $ref->{type} =~ qr{ (?<actualtype> [^\d]+ ) $ref->{trip_no} $ }x )
+		and $ref->{type} =~ m{ (?<actualtype> [^\d]+ ) $ref->{trip_no} $ }x )
 	{
 		$ref->{type} = $+{actualtype};
 	}
@@ -227,6 +238,21 @@ sub trip_numbers {
 	my ($self) = @_;
 
 	return @{ $self->{trip_numbers} // [] };
+}
+
+sub type_at {
+	my ( $self, $loc, $ts ) = @_;
+	for my $stop ( $self->route ) {
+		if ( $stop->name eq $loc or $stop->eva eq $loc ) {
+			if (   not defined $ts
+				or not( $stop->sched_dep // $stop->sched_arr )
+				or ( $stop->sched_dep // $stop->sched_arr )->epoch == $ts )
+			{
+				return $stop->type;
+			}
+		}
+	}
+	return;
 }
 
 sub trip_no_at {
