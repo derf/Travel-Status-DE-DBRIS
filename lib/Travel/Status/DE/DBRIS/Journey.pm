@@ -7,13 +7,13 @@ use 5.020;
 use parent 'Class::Accessor';
 
 use Travel::Status::DE::DBRIS::Location;
+use Travel::Status::DE::DBRIS::Operators;
 
-our $VERSION = '0.13';
+our $VERSION = '0.18';
 
 # ->number is deprecated
-# TODO: Rename ->train, ->train_no to ->trip, ->trip_no
 Travel::Status::DE::DBRIS::Journey->mk_ro_accessors(
-	qw(day id train train_no line_no type number is_cancelled));
+	qw(admin_id day id trip trip_no line_no type number operator is_cancelled));
 
 sub new {
 	my ( $obj, %opt ) = @_;
@@ -25,7 +25,7 @@ sub new {
 	my $ref = {
 		id           => $opt{id},
 		day          => $strpdate->parse_datetime( $json->{reisetag} ),
-		train        => $json->{zugName},
+		trip         => $json->{zugName},
 		is_cancelled => $json->{cancelled},
 		raw_route    => $json->{halte},
 		raw_polyline => $json->{polylineGroup}{polylineDescriptions},
@@ -33,19 +33,81 @@ sub new {
 	};
 
 	if ( $json->{halte} and @{ $json->{halte} } ) {
-		$ref->{train_no} = $json->{halte}[0]{nummer};
+		my %admin_id_ml;
+		my %trip_no_ml;
+		my %type_ml;
+
+		for my $stop ( @{ $json->{halte} } ) {
+			if ( defined $stop->{adminID} ) {
+				$admin_id_ml{ $stop->{adminID} } += 1;
+			}
+			if ( defined $stop->{nummer} ) {
+				$trip_no_ml{ $stop->{nummer} } += 1;
+			}
+			if ( defined $stop->{kategorie} ) {
+				$type_ml{ $stop->{kategorie} } += 1;
+			}
+		}
+
+		if (%admin_id_ml) {
+			my @admin_id_argmax
+			  = reverse sort { $admin_id_ml{$a} <=> $admin_id_ml{$b} }
+			  keys %admin_id_ml;
+			$ref->{admin_id} = $admin_id_argmax[0];
+			if (
+				my $op
+				= Travel::Status::DE::DBRIS::Operators::get_operator_name(
+					$ref->{admin_id}
+				)
+			  )
+			{
+				$ref->{operator} = $op;
+			}
+
+			# return most frequent admin ID first
+			$ref->{admin_ids} = \@admin_id_argmax;
+			$ref->{operators} = [
+				map {
+					Travel::Status::DE::DBRIS::Operators::get_operator_name($_)
+					  // $_
+				} @admin_id_argmax
+			];
+		}
+
+		if (%type_ml) {
+			my @type_argmax
+			  = reverse sort { $type_ml{$a} <=> $type_ml{$b} } keys %type_ml;
+			$ref->{type}  = $type_argmax[0];
+			$ref->{types} = \@type_argmax;
+		}
+
+		if (%trip_no_ml) {
+			my @trip_no_argmax
+			  = reverse sort { $trip_no_ml{$a} <=> $trip_no_ml{$b} }
+			  keys %trip_no_ml;
+			$ref->{trip_no}      = $trip_no_argmax[0];
+			$ref->{trip_numbers} = \@trip_no_argmax;
+		}
 	}
 
 	# Number is either train no (ICE, RE) or line no (S, U, Bus, ...)
 	# with no way of distinguishing between those
-	if ( $ref->{train} ) {
-		( $ref->{type}, $ref->{number} ) = split( qr{\s+}, $ref->{train} );
+	if ( $ref->{trip} ) {
+		my @trip_parts = split( qr{\s+}, $ref->{trip} );
+		if ( not defined $ref->{type} ) {
+			$ref->{type} = $trip_parts[0];
+		}
+		$ref->{number} = $trip_parts[-1];
+		if ( not defined $ref->{trip_no} ) {
+			$ref->{trip_no} = $ref->{number};
+		}
 	}
 
-	# For some trains, the train type also contains the train number like "MEX19161"
-	# If we can detect this, remove the number from the train type
-	if ( $ref->{train_no} and $ref->{type}
-		and $ref->{type} =~ qr{ (?<actualtype> [^\d]+ ) $ref->{train_no} $ }x )
+	# For some trips, the type also contains the trip number like "MEX19161"
+	# If we can detect this, remove the number from the trip type
+	if (    $ref->{trip_no}
+		and $ref->{type}
+		and $ref->{type} =~ m{ (?<actualtype> [^\d]+ ) $ref->{trip_no} $ }x )
 	{
 		$ref->{type} = $+{actualtype};
 	}
@@ -58,8 +120,8 @@ sub new {
 	}
 
 	if (    defined $ref->{number}
-		and defined $ref->{train_no}
-		and $ref->{number} ne $ref->{train_no} )
+		and defined $ref->{trip_no}
+		and $ref->{number} ne $ref->{trip_no} )
 	{
 		$ref->{line_no} = $ref->{number};
 	}
@@ -142,7 +204,11 @@ sub route {
 	@{ $self->{route} }
 	  = map {
 		Travel::Status::DE::DBRIS::Location->new(
-			json         => $_,
+			json     => $_,
+			operator =>
+			  scalar Travel::Status::DE::DBRIS::Operators::get_operator_name(
+				$_->{adminID}
+			  ),
 			strptime_obj => $self->{strptime_obj}
 		)
 	  } ( @{ $self->{raw_route} // [] },
@@ -161,6 +227,76 @@ sub messages {
 	my ($self) = @_;
 
 	return @{ $self->{messages} // [] };
+}
+
+sub admin_ids {
+	my ($self) = @_;
+
+	return @{ $self->{admin_ids} // [] };
+}
+
+sub operators {
+	my ($self) = @_;
+
+	return @{ $self->{operators} // [] };
+}
+
+sub types {
+	my ($self) = @_;
+
+	return @{ $self->{types} // [] };
+}
+
+sub trip_numbers {
+	my ($self) = @_;
+
+	return @{ $self->{trip_numbers} // [] };
+}
+
+sub type_at {
+	my ( $self, $loc, $ts ) = @_;
+	for my $stop ( $self->route ) {
+		if ( $stop->name eq $loc or $stop->eva eq $loc ) {
+			if (   not defined $ts
+				or not( $stop->sched_dep // $stop->sched_arr )
+				or ( $stop->sched_dep // $stop->sched_arr )->epoch == $ts )
+			{
+				return $stop->type;
+			}
+		}
+	}
+	return;
+}
+
+sub trip_no_at {
+	my ( $self, $loc, $ts ) = @_;
+	for my $stop ( $self->route ) {
+		if ( $stop->name eq $loc or $stop->eva eq $loc ) {
+			if (   not defined $ts
+				or not( $stop->sched_dep // $stop->sched_arr )
+				or ( $stop->sched_dep // $stop->sched_arr )->epoch == $ts )
+			{
+				return $stop->trip_no;
+			}
+		}
+	}
+	return;
+}
+
+sub train {
+	my ($self) = @_;
+
+	warn('$journey->train accessor is deprecated; use ->trip instead');
+
+	return $self->trip;
+}
+
+sub train_no {
+	my ($self) = @_;
+
+	warn('$journey->train_no accessor is deprecated; use ->trip_no instead');
+
+	return $self->trip_no;
 }
 
 sub TO_JSON {
@@ -201,7 +337,7 @@ journey received by Travel::Status::DE::DBRIS
 
 =head1 VERSION
 
-version 0.13
+version 0.18
 
 =head1 DESCRIPTION
 
@@ -224,6 +360,27 @@ origin station.
 Trip ID / journey ID, i.e., the argument passed to
 Travel::Status::DE::DBRIS->new's B<journey> key.
 
+=item $journey->admin_id
+
+Admin ID identifying the operator of the journey.
+In case there are mulitple operators, returns the one responsible for the
+majority of stops.
+
+=item $journey->admin_ids
+
+List of strings indirectly identifying the operators of the journey, in
+descending order of the number of stops they are responsible for.
+
+=item $journey->operator
+
+String naming the operator of the journey.  In case there are mulitple
+operators, returns the one responsible for the majority of stops.
+
+=item $journey->operators
+
+List of strings naming the operators of the journey, in descending order of the
+number of stops they are responsible for.
+
 =item $journey->train
 
 Textual description of the departure, typically consisting of type identifier
@@ -232,6 +389,13 @@ Textual description of the departure, typically consisting of type identifier
 =item $journey->train_no
 
 Trip number, if available. undef otherwise.
+
+=item $journey->trip_no_at($stop, $epoch)
+
+Return trip number at I<$stop> (name or EVA ID), if available.  Optionally,
+I<$epoch> can be used to only match stops where scheduled departure or arrival
+is equal to I<$epoch>. This is useful in case a trip passes the same stop
+multiple times.
 
 =item $journey->line_no
 

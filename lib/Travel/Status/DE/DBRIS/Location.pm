@@ -6,11 +6,11 @@ use 5.020;
 
 use parent 'Class::Accessor';
 
-our $VERSION = '0.13';
+our $VERSION = '0.18';
 
 Travel::Status::DE::DBRIS::Location->mk_ro_accessors(
-	qw(eva id lat lon name products type is_cancelled is_additional is_separation display_priority
-	  dep arr sched_dep sched_arr rt_dep rt_arr arr_delay dep_delay delay
+	qw(eva id lat lon name admin_id operator products type is_cancelled is_additional is_separation display_priority
+	  trip_no trip_type dep arr sched_dep sched_arr rt_dep rt_arr arr_delay dep_delay delay
 	  platform sched_platform rt_platform
 	  occupancy_first occupancy_second occupancy
 	)
@@ -36,10 +36,12 @@ sub new {
 		name           => $json->{name},
 		products       => $json->{products},
 		type           => $json->{type},
+		trip_type      => $json->{kategorie},
 		is_cancelled   => $json->{canceled},
 		is_additional  => $json->{additional},
 		sched_platform => $json->{gleis},
 		rt_platform    => $json->{ezGleis},
+		operator       => $opt{operator},
 	};
 
 	if ( $json->{abfahrtsZeitpunkt} ) {
@@ -73,6 +75,13 @@ sub new {
 
 	$ref->{delay} = $ref->{arr_delay} // $ref->{dep_delay};
 
+	if ( $json->{adminID} ) {
+		$ref->{admin_id} = $json->{adminID};
+	}
+	if ( $json->{nummer} ) {
+		$ref->{trip_no} = $json->{nummer};
+	}
+
 	for my $occupancy ( @{ $json->{auslastungsmeldungen} // [] } ) {
 		if ( $occupancy->{klasse} eq 'KLASSE_1' ) {
 			$ref->{occupancy_first} = $occupancy->{stufe};
@@ -96,6 +105,9 @@ sub new {
 	for my $message ( @{ $json->{priorisierteMeldungen} // [] } ) {
 		if ( $message->{type} and $message->{type} eq 'HALT_AUSFALL' ) {
 			$ref->{is_cancelled} = 1;
+		}
+		elsif ( $message->{text} and $message->{text} eq 'Zusatzhalt' ) {
+			$ref->{is_additional} = 1;
 		}
 		push( @{ $ref->{messages} }, $message );
 	}
