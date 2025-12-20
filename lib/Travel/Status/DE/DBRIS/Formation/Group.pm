@@ -288,7 +288,8 @@ my %ice_name = (
 	9457 => 'Bundesrepublik Deutschland',
 	9481 => 'Rheinland-Pfalz',
 	9485 => 'Karriere-ICE',
-	9488 => 'Würzburg'
+	9488 => 'Würzburg',
+	9499 => 'Matterhorn'
 );
 
 # }}}
