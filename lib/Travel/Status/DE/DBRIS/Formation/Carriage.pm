@@ -95,22 +95,35 @@ sub new {
 
 	$ref->{start_meters} = $pos->{start};
 	$ref->{end_meters}   = $pos->{end};
-	$ref->{start_percent}
-	  = ( $pos->{start} - $platform->{start} ) * 100 / $platform_length;
-	$ref->{end_percent}
-	  = ( $pos->{end} - $platform->{start} ) * 100 / $platform_length;
-	if ( defined $pos->{start} and defined $pos->{end} ) {
-		$ref->{length_meters} = $pos->{start} - $pos->{end};
+	if (    defined $pos->{start}
+		and defined $platform->{start}
+		and $platform_length )
+	{
+		$ref->{start_percent}
+		  = ( $pos->{start} - $platform->{start} ) * 100 / $platform_length;
 	}
-	$ref->{length_percent} = $ref->{end_percent} - $ref->{start_percent};
+	if (    defined $pos->{end}
+		and defined $platform->{start}
+		and $platform_length )
+	{
+		$ref->{end_percent}
+		  = ( $pos->{end} - $platform->{start} ) * 100 / $platform_length;
+	}
 
-	if (   $pos->{start} eq ''
+	if (   not defined $pos->{start}
+		or not defined $pos->{end}
+		or $pos->{start} eq ''
 		or $pos->{end} eq '' )
 	{
 		$ref->{position}{valid} = 0;
 	}
 	else {
 		$ref->{position}{valid} = 1;
+		$ref->{length_meters} = $pos->{start} - $pos->{end};
+	}
+
+	if ( defined $ref->{start_percent} and defined $ref->{end_percent} ) {
+		$ref->{length_percent} = $ref->{end_percent} - $ref->{start_percent};
 	}
 
 	return $self;
