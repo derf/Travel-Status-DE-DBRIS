@@ -49,7 +49,10 @@ sub new {
 	$ref->{section}       = $json{platformPosition}{sector};
 	$ref->{type}          = $json{type}{constructionType};
 
-	$ref->{model} =~ s{^.....(...)....(?:-.)?$}{$1} or $ref->{model} = undef;
+	if ( defined $ref->{model} ) {
+		$ref->{model} =~ s{^.....(...)....(?:-.)?$}{$1}
+		  or $ref->{model} = undef;
+	}
 
 	my $self = bless( $ref, $obj );
 
