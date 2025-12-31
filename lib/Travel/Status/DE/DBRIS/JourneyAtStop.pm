@@ -40,8 +40,12 @@ sub new {
 		shift( @{ $ref->{via} } );
 	}
 
-	$ref->{maybe_train_no} = $ref->{train}     =~ s{^.* ++}{}r;
-	$ref->{maybe_line_no}  = $ref->{train_mid} =~ s{^.* ++}{}r;
+	if ( defined $ref->{train} ) {
+		$ref->{maybe_train_no} = $ref->{train} =~ s{^.* ++}{}r;
+	}
+	if ( defined $ref->{train_mid} ) {
+		$ref->{maybe_line_no} = $ref->{train_mid} =~ s{^.* ++}{}r;
+	}
 
 	bless( $ref, $obj );
 
