@@ -102,7 +102,8 @@ sub parse_carriages {
 			push( @{ $self->{carriages} }, $carriage_object );
 		}
 		@group_carriages
-		  = sort { $a->start_percent <=> $b->start_percent } @group_carriages;
+		  = sort { ( $a->start_percent // 0 ) <=> ( $b->start_percent // 0 ) }
+		  @group_carriages;
 		my $group_obj = Travel::Status::DE::DBRIS::Formation::Group->new(
 			json      => $group,
 			carriages => \@group_carriages,
