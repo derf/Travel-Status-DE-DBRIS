@@ -112,7 +112,8 @@ sub parse_carriages {
 		push( @numbers, $group_obj->train_no );
 	}
 
-	@groups = sort { $a->start_percent <=> $b->start_percent } @groups;
+	@groups = sort { ( $a->start_percent // 0 ) <=> ( $b->start_percent // 0 ) }
+	  @groups;
 
 	@numbers = uniq @numbers;
 	$self->{train_numbers} = \@numbers;
