@@ -267,7 +267,6 @@ my %ice_name = (
 	8019 => 'Düsseldorf',
 	8020 => 'Amsterdam',
 	8022 => 'Waldecker Land',
-	8026 => 'Christmas-Train',
 	8029 => 'Europa/Europe',
 	9006 => 'Martin Luther',
 	9009 => 'Cottbus/Chóśebuz',
