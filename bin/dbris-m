@@ -601,7 +601,9 @@ if ($train_no) {
 	if ( my $min_percentage = min @start_percentages ) {
 		print ' ' x ( $min_percentage - 1 );
 	}
-	print $wr->direction == 100 ? '>' : '<';
+	if ( defined $wr->direction ) {
+		print $wr->direction == 100 ? '>' : '<';
+	}
 
 	for my $wagon ( $wr->carriages ) {
 		my $wagon_length  = $wagon->length_percent;

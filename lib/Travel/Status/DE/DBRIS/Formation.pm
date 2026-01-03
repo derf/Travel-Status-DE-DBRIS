@@ -118,7 +118,9 @@ sub parse_carriages {
 	$self->{train_numbers} = \@numbers;
 
 	if ( @{ $self->{carriages} // [] } > 1 ) {
-		if ( $self->{carriages}[0]->{start_percent}
+		if (    defined $self->{carriages}[0]->{start_percent}
+			and defined $self->{carriages}[-1]->{start_percent}
+			and $self->{carriages}[0]->{start_percent}
 			> $self->{carriages}[-1]->{start_percent} )
 		{
 			$self->{direction} = 100;
