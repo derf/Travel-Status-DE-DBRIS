@@ -650,7 +650,7 @@ L<https://github.com/derf/Travel-Status-DE-DBRIS>
 
 =head1 AUTHOR
 
-Copyright (C) 2024-2025 Birte Kristina Friesel E<lt>derf@finalrewind.orgE<gt>
+Copyright (C) 2024-2026 Birte Kristina Friesel E<lt>derf@finalrewind.orgE<gt>
 
 =head1 LICENSE
 
