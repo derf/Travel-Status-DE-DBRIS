@@ -180,3 +180,12 @@ docker run --rm derfnull/dbris-m:latest --version
 
 Documentation is not available in this image. Please refer to the
 [online dbris-m manual](https://man.finalrewind.org/1/dbris-m/) instead.
+
+## References
+
+Mirrors of this repository are available at the following locations.
+
+* [Chaosdorf](https://chaosdorf.de/git/derf/Travel-Status-DE-DBRIS)
+* [Codeberg](https://codeberg.org/derf/Travel-Status-DE-DBRIS)
+* [Finalrewind](https://git.finalrewind.org/derf/Travel-Status-DE-DBRIS)
+* [GitHub](https://github.com/derf/Travel-Status-DE-DBRIS)
