@@ -33,6 +33,7 @@ Module::Build->new(
 		'List::Util'                 => 0,
 		'LWP::UserAgent'             => 0,
 		'LWP::Protocol::https'       => 0,
+		'UUID'                       => 0,
 	},
 	script_files => 'bin/',
 	sign         => 1,

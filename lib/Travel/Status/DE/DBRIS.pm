@@ -13,6 +13,7 @@ use DateTime::Format::Strptime;
 use Encode qw(decode encode);
 use JSON;
 use LWP::UserAgent;
+use UUID qw(uuid4);
 
 use Travel::Status::DE::DBRIS::Formation;
 use Travel::Status::DE::DBRIS::JourneyAtStop;
@@ -42,6 +43,13 @@ sub new {
 		results        => [],
 		station        => $conf{station},
 		ua             => $ua,
+		header         => {
+			'accept'           => 'application/json',
+			'content-type'     => 'application/json; charset=utf-8',
+			'Origin'           => 'https://www.bahn.de',
+			'Referer'          => 'https://www.bahn.de/buchung/fahrplan/suche',
+			'x-correlation-id' => uuid4() . '_' . uuid4(),
+		},
 	};
 
 	bless( $self, $obj );
@@ -135,6 +143,10 @@ sub new {
 	else {
 		if ( $self->{developer_mode} ) {
 			say "requesting $req";
+		}
+
+		while ( my ( $key, $value ) = each %{ $self->{header} } ) {
+			$ua->default_header( $key => $value );
 		}
 
 		my ( $content, $error ) = $self->get_with_cache($req);
@@ -317,7 +329,7 @@ sub get_with_cache_p {
 		say '  cache miss';
 	}
 
-	$self->{ua}->get_p($url)->then(
+	$self->{ua}->get_p( $url => $self->{header} )->then(
 		sub {
 			my ($tx) = @_;
 			if ( my $err = $tx->error ) {
