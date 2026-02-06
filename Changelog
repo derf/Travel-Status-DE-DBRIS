@@ -1,3 +1,14 @@
+Travel::Status::DE::DBRIS 0.23 - Fri Feb 06 2026
+
+    * Deutsche Bahn have rolled out a rather aggressive Akamai EdgeSuite
+      WAF configuration, and too-frequent requests made with this module
+      may cause the corresponding IP address or range to be blocked for
+      yet-to-be-determined amounts of time. Send more plausible requests
+      with randomized user agent strings and additional headers to maybe
+      hopefully slightly reduce the risk of this happening.
+    * New dependency: UUID
+
+
 Travel::Status::DE::DBRIS 0.22 - Sun Jan 04 2026
 
     * Further fixes for fundefined fvalues
