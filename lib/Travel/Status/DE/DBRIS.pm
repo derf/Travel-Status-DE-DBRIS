@@ -30,7 +30,7 @@ sub new {
 	my $ua = $conf{user_agent};
 
 	if ( not $ua ) {
-		my %lwp_options = %{ $conf{lwp_options} // { timeout => 10 } };
+		my %lwp_options = %{ $conf{lwp_options} // { timeout => 20 } };
 		$ua = LWP::UserAgent->new(%lwp_options);
 		$ua->env_proxy;
 	}
@@ -578,7 +578,7 @@ network reception) to be cached.
 
 =item B<lwp_options> => I<\%hashref>
 
-Passed on to C<< LWP::UserAgent->new >>. Defaults to C<< { timeout => 10 } >>,
+Passed on to C<< LWP::UserAgent->new >>. Defaults to C<< { timeout => 20 } >>,
 you can use an empty hashref to unset the default.
 
 =item B<num_vias> => I<$num> (station)
