@@ -8,7 +8,6 @@ Travel::Status::DE::DBRIS 0.23 - Fri Feb 06 2026
       hopefully slightly reduce the risk of this happening.
     * New dependency: UUID
 
-
 Travel::Status::DE::DBRIS 0.22 - Sun Jan 04 2026
 
     * Further fixes for fundefined fvalues
