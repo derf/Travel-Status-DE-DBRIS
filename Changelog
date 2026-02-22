@@ -1,3 +1,8 @@
+Travel::Status::DE::DBRIS 0.24 - Sun Feb 22 2026
+
+    * Increase default timeout to 20 seconds to deal with bahn.de's WAF now
+      delaying most requests by about 10 seconds.
+
 Travel::Status::DE::DBRIS 0.23 - Fri Feb 06 2026
 
     * Deutsche Bahn have rolled out a rather aggressive Akamai EdgeSuite
