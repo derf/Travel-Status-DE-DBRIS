@@ -12,7 +12,7 @@ use Travel::Status::DE::DBRIS::Formation::Group;
 use Travel::Status::DE::DBRIS::Formation::Sector;
 use Travel::Status::DE::DBRIS::Formation::Carriage;
 
-our $VERSION = '0.21';
+our $VERSION = '0.24';
 
 Travel::Status::DE::DBRIS::Formation->mk_ro_accessors(
 	qw(direction platform train_type));
@@ -112,7 +112,8 @@ sub parse_carriages {
 		push( @numbers, $group_obj->train_no );
 	}
 
-	@groups = sort { $a->start_percent <=> $b->start_percent } @groups;
+	@groups = sort { ( $a->start_percent // 0 ) <=> ( $b->start_percent // 0 ) }
+	  @groups;
 
 	@numbers = uniq @numbers;
 	$self->{train_numbers} = \@numbers;

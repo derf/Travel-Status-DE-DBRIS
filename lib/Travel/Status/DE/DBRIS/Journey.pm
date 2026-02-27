@@ -9,7 +9,7 @@ use parent 'Class::Accessor';
 use Travel::Status::DE::DBRIS::Location;
 use Travel::Status::DE::DBRIS::Operators;
 
-our $VERSION = '0.21';
+our $VERSION = '0.24';
 
 # ->number is deprecated
 Travel::Status::DE::DBRIS::Journey->mk_ro_accessors(
@@ -337,7 +337,7 @@ journey received by Travel::Status::DE::DBRIS
 
 =head1 VERSION
 
-version 0.21
+version 0.24
 
 =head1 DESCRIPTION
 
@@ -492,7 +492,7 @@ Travel::Status::DE::DBRIS(3pm).
 
 =head1 AUTHOR
 
-Copyright (C) 2025 by Birte Kristina Friesel E<lt>derf@finalrewind.orgE<gt>
+Copyright (C) 2025-2026 by Birte Kristina Friesel E<lt>derf@finalrewind.orgE<gt>
 
 =head1 LICENSE
 
