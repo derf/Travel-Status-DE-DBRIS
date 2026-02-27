@@ -282,6 +282,7 @@ my %ice_name = (
 	9203 => 'Stendal',
 	9205 => 'Biosphärengebiet Schwäbische Alb',
 	9208 => 'Nationalpark Bayrischer Wald',
+	9220 => 'Steiermark',
 	9234 => 'Ruhr',
 	9237 => 'Spree',
 	9457 => 'Bundesrepublik Deutschland',
