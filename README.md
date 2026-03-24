@@ -189,3 +189,7 @@ Mirrors of this repository are available at the following locations.
 * [Codeberg](https://codeberg.org/derf/Travel-Status-DE-DBRIS)
 * [Finalrewind](https://git.finalrewind.org/derf/Travel-Status-DE-DBRIS)
 * [GitHub](https://github.com/derf/Travel-Status-DE-DBRIS)
+
+## Links
+
+[![Hypercommit](https://img.shields.io/badge/Hypercommit-DB2475)](https://hypercommit.com/travel-status-de-dbris)
