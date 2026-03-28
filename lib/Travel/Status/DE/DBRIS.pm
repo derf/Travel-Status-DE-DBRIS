@@ -81,6 +81,8 @@ sub new {
 		if ( $conf{modes_of_transit} ) {
 			@mots = @{ $conf{modes_of_transit} // [] };
 		}
+
+		# arr → /ankuenfte
 		$req
 		  = 'https://www.bahn.de/web/api/reiseloesung/abfahrten'
 		  . '?datum='

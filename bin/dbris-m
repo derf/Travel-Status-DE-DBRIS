@@ -386,7 +386,8 @@ if ( $opt{station} ) {
 
 	my @results = map { $_->[1] }
 	  sort { $a->[0] <=> $b->[0] }
-	  map { [ ( $_->dep // $_->arr )->epoch, $_ ] } $status->results;
+	  map  { [ $_->dep->epoch, $_ ] }
+	  grep { $_->dep } $status->results;
 
 	for my $result (@results) {
 		printf(
