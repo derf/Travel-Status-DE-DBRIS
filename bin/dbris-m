@@ -722,7 +722,7 @@ bahn.de. According to word of mouth, it uses the HAFAS backend that can also
 be accessed by Travel::Status::DE::HAFAS(3pm)'s DB service. However, the
 bahn.de entry point is likely more reliable in the long run.
 
-B<dbris-m> can serve as an arrival/departure monitor, request details about a
+B<dbris-m> can serve as a departure monitor, request details about a
 specific trip, and look up public transport stops by name or geolocation. The
 operating mode depends on the contents of its non-option argument.
 
@@ -787,7 +787,7 @@ Default: today.
 
 =item B<-j>, B<--with-jid> (departure monitor)
 
-Show JourneyID for each listed arrival/departure.
+Show JourneyID for each listed departure.
 These can be used to obtain details on individual trips with subsequent
 B<dbris-m> invocations.
 
