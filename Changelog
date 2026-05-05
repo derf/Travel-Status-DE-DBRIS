@@ -1,6 +1,7 @@
 Travel::Status::DE::DBRIS 0.28 - Tue May 05 2026
 
     * Location: adjust for bahn.de-internal API changes
+    * Update train names (patch by Thulmi)
 
 Travel::Status::DE::DBRIS 0.27 - Sat Mar 28 2026
 
