@@ -233,6 +233,7 @@ my %ice_name = (
 	1522 => 'Torgau',
 	1523 => 'Hansestadt Greifswald',
 	1524 => 'Hansestadt Rostock',
+	1807 => 'Nationalpark Schleswig-Holsteinisches Wattenmeer',
 	2853 => 'Nationalpark Sächsische Schweiz',
 	2865 => 'Remstal',
 	2868 => 'Nationalpark Niedersächsisches Wattenmeer',
