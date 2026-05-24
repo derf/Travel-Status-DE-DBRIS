@@ -549,8 +549,22 @@ elsif ( $opt{journey} and not( $raw_json_output or $json_output ) ) {
 	}
 }
 elsif ( $opt{geoSearch} ) {
+	my $distance;
+	eval {
+		require GIS::Distance;
+		$distance = GIS::Distance->new;
+	};
 	for my $result ( $status->results ) {
 		if ( defined $result->eva ) {
+			if ($distance) {
+				printf(
+					'%5.1f km  ',
+					$distance->distance_metal(
+						$opt{geoSearch}{latitude}, $opt{geoSearch}{longitude},
+						$result->lat,              $result->lon
+					)
+				);
+			}
 			printf( "%8d  %s\n", $result->eva, $result->name );
 		}
 	}
