@@ -288,6 +288,7 @@ my %ice_name = (
 	9234 => 'Ruhr',
 	9237 => 'Spree',
 	9457 => 'Bundesrepublik Deutschland',
+	9459 => 'Knuffingen',
 	9481 => 'Rheinland-Pfalz',
 	9485 => 'Karriere-ICE',
 	9488 => 'Würzburg',
