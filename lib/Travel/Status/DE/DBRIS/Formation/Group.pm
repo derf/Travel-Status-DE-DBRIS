@@ -265,6 +265,7 @@ my %ice_name = (
 	4893 => 'Bodetal',
 	4898 => 'Lahntal',
 	8007 => 'Rheinland',
+	8011 => 'Köln',
 	8019 => 'Düsseldorf',
 	8020 => 'Amsterdam',
 	8022 => 'Waldecker Land',
