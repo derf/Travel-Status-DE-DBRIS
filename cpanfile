@@ -3,7 +3,7 @@ requires 'DateTime';
 requires 'DateTime::Format::Strptime';
 requires 'Getopt::Long';
 requires 'HTTP::Request', '7.00';
-requires 'IO::Uncompress::Brotli';
+requires 'IO::Uncompress::Brotli', '0.004_002';
 requires 'JSON';
 requires 'List::Util';
 requires 'LWP::UserAgent';
