@@ -11,6 +11,7 @@ use Carp qw(confess);
 use DateTime;
 use DateTime::Format::Strptime;
 use Encode qw(decode encode);
+use IO::Uncompress::Brotli;
 use JSON;
 use LWP::UserAgent;
 use UUID qw(uuid4);
@@ -367,16 +368,8 @@ sub get_with_cache_p {
 			if (   $tx->res->headers->content_encoding
 				&& $tx->res->headers->content_encoding eq 'br' )
 			{
-				eval {
-					require IO::Uncompress::Brotli;
-					say "unbro";
-					$content = IO::Uncompress::Brotli::unbro(
-						$tx->res->content->asset->slurp );
-					say "done";
-				};
-				if ($@) {
-					say $@;
-				}
+				$content = IO::Uncompress::Brotli::unbro(
+					$tx->res->content->asset->slurp );
 			}
 
 			if ($cache) {
