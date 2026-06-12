@@ -59,6 +59,7 @@ sub new {
 		ua             => $ua,
 		header         => {
 			'accept'           => 'application/json',
+			'accept-encoding'  => 'gzip, br',
 			'content-type'     => 'application/json; charset=utf-8',
 			'Origin'           => 'https://www.bahn.de',
 			'Referer'          => 'https://www.bahn.de/buchung/fahrplan/suche',
@@ -301,7 +302,7 @@ sub get_with_cache {
 		}
 		return ( undef, $reply->status_line );
 	}
-	my $content = $reply->content;
+	my $content = $reply->decoded_content;
 
 	if ($cache) {
 		$cache->freeze( $url, \$content );
@@ -362,6 +363,22 @@ sub get_with_cache_p {
 				return;
 			}
 			my $content = $tx->res->body;
+
+			if (   $tx->res->headers->content_encoding
+				&& $tx->res->headers->content_encoding eq 'br' )
+			{
+				eval {
+					require IO::Uncompress::Brotli;
+					say "unbro";
+					$content = IO::Uncompress::Brotli::unbro(
+						$tx->res->content->asset->slurp );
+					say "done";
+				};
+				if ($@) {
+					say $@;
+				}
+			}
+
 			if ($cache) {
 				$cache->freeze( $url, \$content );
 			}
