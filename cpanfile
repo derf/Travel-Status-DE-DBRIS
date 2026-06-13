@@ -2,7 +2,7 @@ requires 'Class::Accessor';
 requires 'DateTime';
 requires 'DateTime::Format::Strptime';
 requires 'Getopt::Long';
-requires 'HTTP::Request', '7.00';
+requires 'HTTP::Request', '6.39';
 requires 'IO::Uncompress::Brotli', '0.004_002';
 requires 'JSON';
 requires 'List::Util';
