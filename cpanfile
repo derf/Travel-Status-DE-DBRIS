@@ -8,6 +8,7 @@ requires 'JSON';
 requires 'List::Util';
 requires 'LWP::UserAgent';
 requires 'LWP::Protocol::https';
+requires 'UUID';
 
 recommends 'GIS::Distance';
 
