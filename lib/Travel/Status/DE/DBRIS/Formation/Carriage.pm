@@ -49,8 +49,11 @@ sub new {
 	$ref->{section}       = $json{platformPosition}{sector};
 	$ref->{type}          = $json{type}{constructionType};
 
+	if ( defined $ref->{uic_id} ) {
+		$ref->{uic_id} =~ s{ ^ \d{11} \K - }{}x;
+	}
 	if ( defined $ref->{model} ) {
-		$ref->{model} =~ s{^.....(...)....(?:-.)?$}{$1}
+		$ref->{model} =~ s{^.....(...)...-?.(?:-.)?$}{$1}
 		  or $ref->{model} = undef;
 	}
 
