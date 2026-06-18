@@ -497,171 +497,177 @@ sub parse_model {
 			next;
 		}
 
-		if ( $carriage->model == 23 ) {
-			$ml{'023'}++;
+		if ( $carriage->country == 80 ) {
+			if (   $carriage->model == 91
+				or $carriage->model == 491
+				or $carriage->model == 791
+				or $carriage->model == 891 )
+			{
+				$ml{'091'}++;
+			}
+			elsif ( $carriage->model == 401
+				or ( $carriage->model >= 801 and $carriage->model <= 804 ) )
+			{
+				$ml{'401'}++;
+			}
+			elsif ( $carriage->model == 402
+				or ( $carriage->model >= 805 and $carriage->model <= 808 ) )
+			{
+				$ml{'402'}++;
+			}
+			elsif ( $carriage->model == 403
+				and substr( $carriage->uic_id, 9, 2 ) <= 37 )
+			{
+				$ml{'403.S1'}++;
+			}
+			elsif ( $carriage->model == 403
+				and substr( $carriage->uic_id, 9, 2 ) > 37 )
+			{
+				$ml{'403.S2'}++;
+			}
+			elsif ( $carriage->model == 406 ) {
+				$ml{'406'}++;
+			}
+			elsif ( $carriage->model == 407 ) {
+				$ml{'407'}++;
+			}
+			elsif ( $carriage->model == 408 ) {
+				$ml{'408'}++;
+			}
+			elsif ( $carriage->model == 412 or $carriage->model == 812 ) {
+				$ml{'412'}++;
+			}
+			elsif ( $carriage->model == 411
+				and substr( $carriage->uic_id, 9, 2 ) <= 32 )
+			{
+				$ml{'411.S1'}++;
+			}
+			elsif ( $carriage->model == 411
+				and substr( $carriage->uic_id, 9, 2 ) > 32 )
+			{
+				$ml{'411.S2'}++;
+			}
+			elsif ( $carriage->model == 415 ) {
+				$ml{'415'}++;
+			}
+			elsif ( $carriage->model == 420 or $carriage->model == 421 ) {
+				$ml{'420'}++;
+			}
+			elsif ( $carriage->model == 422 or $carriage->model == 432 ) {
+				$ml{'422'}++;
+			}
+			elsif ( $carriage->model == 423 or $carriage->model == 433 ) {
+				$ml{'423'}++;
+			}
+			elsif ( $carriage->model == 424 or $carriage->model == 434 ) {
+				$ml{'424'}++;
+			}
+			elsif ( $carriage->model == 425 or $carriage->model == 435 ) {
+				$ml{'425'}++;
+			}
+			elsif ( $carriage->model == 427 or $carriage->model == 827 ) {
+				$ml{'427'}++;
+			}
+			elsif ( $carriage->model == 428 or $carriage->model == 828 ) {
+				$ml{'428'}++;
+			}
+			elsif ( $carriage->model == 429 or $carriage->model == 829 ) {
+				$ml{'429'}++;
+			}
+			elsif ( $carriage->model == 430 or $carriage->model == 431 ) {
+				$ml{'430'}++;
+			}
+			elsif ($carriage->model == 440
+				or $carriage->model == 441
+				or $carriage->model == 841 )
+			{
+				$ml{'440'}++;
+			}
+			elsif ($carriage->model == 442
+				or $carriage->model == 443 )
+			{
+				$ml{'442'}++;
+			}
+			elsif ($carriage->model == 462
+				or $carriage->model == 862 )
+			{
+				$ml{'462'}++;
+			}
+			elsif ($carriage->model == 463
+				or $carriage->model == 863 )
+			{
+				$ml{'463'}++;
+			}
+			elsif ( substr( $carriage->uic_id, 5, 4 ) =~ m{ 44 [56] [16] }x ) {
+				$ml{'445446'}++;
+			}
+			elsif ( $carriage->model == 445 ) {
+				$ml{'445'}++;
+			}
+			elsif ( $carriage->model == 446 ) {
+				$ml{'446'}++;
+			}
+			elsif ( $carriage->model == 475 ) {
+				$ml{'475'}++;
+			}
+			elsif ( $carriage->model == 563 ) {
+				$ml{'563'}++;
+			}
+			elsif ( $carriage->model == 612 ) {
+				$ml{'612'}++;
+			}
+			elsif ( $carriage->model == 620 or $carriage->model == 621 ) {
+				$ml{'620'}++;
+			}
+			elsif ( $carriage->model == 622 ) {
+				$ml{'622'}++;
+			}
+			elsif ( $carriage->model == 623 ) {
+				$ml{'623'}++;
+			}
+			elsif ( $carriage->model == 631 ) {
+				$ml{'631'}++;
+			}
+			elsif ( $carriage->model == 632 ) {
+				$ml{'632'}++;
+			}
+			elsif ( $carriage->model == 633 ) {
+				$ml{'633'}++;
+			}
+			elsif ( $carriage->model == 640 ) {
+				$ml{'640'}++;
+			}
+			elsif ( $carriage->model == 642 ) {
+				$ml{'642'}++;
+			}
+			elsif ( $carriage->model == 643 or $carriage->model == 943 ) {
+				$ml{'643'}++;
+			}
+			elsif ( $carriage->model == 644 or $carriage->model == 944 ) {
+				$ml{'644'}++;
+			}
+			elsif ( $carriage->model == 648 ) {
+				$ml{'648'}++;
+			}
+			elsif ( $carriage->model == 650 ) {
+				$ml{'650'}++;
+			}
+			elsif ( $self->train_type eq 'IC' and $carriage->model == 110 ) {
+				$ml{'IC2.KISS'}++;
+			}
+			elsif ( $self->train_type eq 'IC' and $carriage->is_dosto ) {
+				$ml{'IC2.TWIN'}++;
+			}
 		}
-		elsif ($carriage->model == 91
-			or $carriage->model == 491
-			or $carriage->model == 791
-			or $carriage->model == 891 )
-		{
-			$ml{'091'}++;
+		elsif ( $carriage->country == 81 ) {
+			if ( substr( $carriage->uic_id, 4, 4 ) eq '4011' ) {
+				$ml{'011'}++;
+			}
 		}
-		elsif ( $carriage->model == 401
-			or ( $carriage->model >= 801 and $carriage->model <= 804 ) )
-		{
-			$ml{'401'}++;
-		}
-		elsif ( $carriage->model == 402
-			or ( $carriage->model >= 805 and $carriage->model <= 808 ) )
-		{
-			$ml{'402'}++;
-		}
-		elsif ( $carriage->model == 403
-			and substr( $carriage->uic_id, 9, 2 ) <= 37 )
-		{
-			$ml{'403.S1'}++;
-		}
-		elsif ( $carriage->model == 403
-			and substr( $carriage->uic_id, 9, 2 ) > 37 )
-		{
-			$ml{'403.S2'}++;
-		}
-		elsif ( $carriage->model == 406 ) {
-			$ml{'406'}++;
-		}
-		elsif ( $carriage->model == 407 ) {
-			$ml{'407'}++;
-		}
-		elsif ( $carriage->model == 408 ) {
-			$ml{'408'}++;
-		}
-		elsif ( $carriage->model == 412 or $carriage->model == 812 ) {
-			$ml{'412'}++;
-		}
-		elsif ( $carriage->model == 411
-			and substr( $carriage->uic_id, 9, 2 ) <= 32 )
-		{
-			$ml{'411.S1'}++;
-		}
-		elsif ( $carriage->model == 411
-			and substr( $carriage->uic_id, 9, 2 ) > 32 )
-		{
-			$ml{'411.S2'}++;
-		}
-		elsif ( $carriage->model == 415 ) {
-			$ml{'415'}++;
-		}
-		elsif ( $carriage->model == 420 or $carriage->model == 421 ) {
-			$ml{'420'}++;
-		}
-		elsif ( $carriage->model == 422 or $carriage->model == 432 ) {
-			$ml{'422'}++;
-		}
-		elsif ( $carriage->model == 423 or $carriage->model == 433 ) {
-			$ml{'423'}++;
-		}
-		elsif ( $carriage->model == 424 or $carriage->model == 434 ) {
-			$ml{'424'}++;
-		}
-		elsif ( $carriage->model == 425 or $carriage->model == 435 ) {
-			$ml{'425'}++;
-		}
-		elsif ( $carriage->model == 427 or $carriage->model == 827 ) {
-			$ml{'427'}++;
-		}
-		elsif ( $carriage->model == 428 or $carriage->model == 828 ) {
-			$ml{'428'}++;
-		}
-		elsif ( $carriage->model == 429 or $carriage->model == 829 ) {
-			$ml{'429'}++;
-		}
-		elsif ( $carriage->model == 430 or $carriage->model == 431 ) {
-			$ml{'430'}++;
-		}
-		elsif ($carriage->model == 440
-			or $carriage->model == 441
-			or $carriage->model == 841 )
-		{
-			$ml{'440'}++;
-		}
-		elsif ($carriage->model == 442
-			or $carriage->model == 443 )
-		{
-			$ml{'442'}++;
-		}
-		elsif ($carriage->model == 462
-			or $carriage->model == 862 )
-		{
-			$ml{'462'}++;
-		}
-		elsif ($carriage->model == 463
-			or $carriage->model == 863 )
-		{
-			$ml{'463'}++;
-		}
-		elsif ( substr($carriage->uic_id, 5, 4) =~ m{ 44 [56] [16] }x ) {
-			$ml{'445446'}++;
-		}
-		elsif ( $carriage->model == 445 ) {
-			$ml{'445'}++;
-		}
-		elsif ( $carriage->model == 446 ) {
-			$ml{'446'}++;
-		}
-		elsif ( $carriage->model == 475 ) {
-			$ml{'475'}++;
-		}
-		elsif ( $carriage->model == 563 ) {
-			$ml{'563'}++;
-		}
-		elsif ( $carriage->model == 612 ) {
-			$ml{'612'}++;
-		}
-		elsif ( $carriage->model == 620 or $carriage->model == 621 ) {
-			$ml{'620'}++;
-		}
-		elsif ( $carriage->model == 622 ) {
-			$ml{'622'}++;
-		}
-		elsif ( $carriage->model == 623 ) {
-			$ml{'623'}++;
-		}
-		elsif ( $carriage->model == 631 ) {
-			$ml{'631'}++;
-		}
-		elsif ( $carriage->model == 632 ) {
-			$ml{'632'}++;
-		}
-		elsif ( $carriage->model == 633 ) {
-			$ml{'633'}++;
-		}
-		elsif ( $carriage->model == 640 ) {
-			$ml{'640'}++;
-		}
-		elsif ( $carriage->model == 642 ) {
-			$ml{'642'}++;
-		}
-		elsif ( $carriage->model == 643 or $carriage->model == 943 ) {
-			$ml{'643'}++;
-		}
-		elsif ( $carriage->model == 644 or $carriage->model == 944 ) {
-			$ml{'644'}++;
-		}
-		elsif ( $carriage->model == 648 ) {
-			$ml{'648'}++;
-		}
-		elsif ( $carriage->model == 650 ) {
-			$ml{'650'}++;
-		}
-		elsif ( $self->train_type eq 'IC' and $carriage->model == 110 ) {
-			$ml{'IC2.KISS'}++;
-		}
-		elsif ( $self->train_type eq 'IC' and $carriage->is_dosto ) {
-			$ml{'IC2.TWIN'}++;
-		}
-		elsif ( substr( $carriage->uic_id, 4, 4 ) eq '4011' ) {
-			$ml{'011'}++;
+		elsif ( $carriage->country == 82 ) {
+			if ( $carriage->model == 23 ) {
+				$ml{'023'}++;
+			}
 		}
 	}
 
