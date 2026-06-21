@@ -578,7 +578,7 @@ sub parse_model {
 			elsif ( $carriage->model == 429 or $carriage->model == 829 ) {
 				$ml{'429'}++;
 			}
-			elsif ( substr( $carriage->uic_id, 5, 4 ) eq '1430' ) {
+			elsif ( substr( $carriage->uic_id, 5, 4 ) eq '1430' or substr( $carriage->uic_id, 5, 4 ) eq '1830' ) {
 			    $ml{'1430'}++;
 			}
 			elsif ( $carriage->model == 430 or $carriage->model == 431 ) {
