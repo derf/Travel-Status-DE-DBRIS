@@ -325,6 +325,7 @@ my %model_name = (
 	'427'      => [ 'FLIRT', 'BR 427' ],
 	'428'      => [ 'FLIRT', 'BR 428' ],
 	'429'      => [ 'FLIRT', 'BR 429' ],
+	'1430'     => [ 'FLIRT', 'BR 1430' ],
 	'430'      => ['BR 430'],
 	'440'      => [ 'Coradia Continental', 'BR 440' ],
 	'442'      => [ 'Talent 2',            'BR 442' ],
@@ -334,6 +335,7 @@ my %model_name = (
 	'462'      => [ 'Desiro HC',           'BR 462' ],
 	'463'      => [ 'Mireo',               'BR 463' ],
 	'475'      => [ 'TGV',                 'BR 475' ],
+	'526'      => [ 'FLIRT Akku',          'BR 526' ],
 	'563'      => [ 'Mireo Plus B',        'BR 563' ],
 	'612'      => [ 'RegioSwinger',        'BR 612' ],
 	'620'      => [ 'LINT 81',             'BR 620' ],
@@ -463,6 +465,7 @@ sub parse_model {
 		'427'      => 0,
 		'428'      => 0,
 		'429'      => 0,
+		'1430'     => 0,
 		'430'      => 0,
 		'440'      => 0,
 		'442'      => 0,
@@ -472,6 +475,7 @@ sub parse_model {
 		'462'      => 0,
 		'463'      => 0,
 		'475'      => 0,
+		'526'      => 0,
 		'563'      => 0,
 		'612'      => 0,
 		'620'      => 0,
@@ -574,6 +578,9 @@ sub parse_model {
 			elsif ( $carriage->model == 429 or $carriage->model == 829 ) {
 				$ml{'429'}++;
 			}
+			elsif ( substr( $carriage->uic_id, 5, 4 ) eq '1430' ) {
+			    $ml{'1430'}++;
+			}
 			elsif ( $carriage->model == 430 or $carriage->model == 431 ) {
 				$ml{'430'}++;
 			}
@@ -610,6 +617,9 @@ sub parse_model {
 			elsif ( $carriage->model == 475 ) {
 				$ml{'475'}++;
 			}
+			elsif ( $carriage->model == 526 ) {
+            	$ml{'526'}++;
+            }
 			elsif ( $carriage->model == 563 ) {
 				$ml{'563'}++;
 			}
