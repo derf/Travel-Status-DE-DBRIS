@@ -79,9 +79,17 @@
     "PR",
     "Polregio"
   ],
+  "5386": [
+    "GV", 
+    "GoVolta"
+  ],
   "54": [
     "CD",
     "Ceske Drahy"
+  ],
+  "54A8N": [
+    "CD", 
+    "Tschechische Bahnen"
   ],
   "55": [
     "MAV",
@@ -219,6 +227,10 @@
     "DB",
     "DB Regio AG Nord"
   ],
+  "8002WF": [
+    "DB", 
+    "DB Regio AG Nord"
+  ],
   "800310": [
     "DB",
     "DB Regio AG NRW"
@@ -286,6 +298,10 @@
   "8003L2": [
     "DB",
     "DB Regio AG NRW"
+  ],
+  "8003RA": [
+    "DB", 
+    "Rhein-Mosel-Bus Ahrweiler"
   ],
   "8003RL": [
     "DB",
@@ -1103,9 +1119,17 @@
     "DB",
     "DB Regio AG Nord"
   ],
+  "B1SH": [
+    "Bus", 
+    "DB Regio AG Nord"
+  ],
   "B2": [
     "DB",
     "DB Regio AG NRW"
+  ],
+  "B2SEV": [
+    "Bus", 
+    "DB SEV GmbH"
   ],
   "B3": [
     "P",
@@ -1167,6 +1191,38 @@
     "RTB",
     "Rurtalbahn"
   ],
+  "deu003": [
+    "deu", 
+    "deu.mobil GmbH"
+  ],
+  "deu171": [
+    "deu", 
+    "deu.mobil GmbH"
+  ],
+  "deu181": [
+    "deu", 
+    "deu.mobil GmbH"
+  ],
+  "deu301": [
+    "deu", 
+    "deu.mobil GmbH"
+  ],
+  "deu331": [
+    "deu", 
+    "deu.mobil GmbH"
+  ],
+  "deu332": [
+    "deu", 
+    "deu.mobil GmbH"
+  ],
+  "deu501": [
+    "deu", 
+    "deu.mobil GmbH"
+  ],
+  "deu511": [
+    "deu", 
+    "deu.mobil GmbH"
+  ],
   "E0": [
     "EVB",
     "EVB ELBE-WESER GmbH"
@@ -1178,6 +1234,14 @@
   "EB": [
     "RB",
     "Erfurter Bahn GmbH"
+  ],
+  "eco001": [
+    "Bus", 
+    "ecoVista e.K."
+  ],
+  "eco002": [
+    "Bus", 
+    "ecoVista e.K."
   ],
   "ED": [
     "FEG",
@@ -1235,6 +1299,14 @@
     "ARV",
     "Arverio Baden-Württemberg"
   ],
+  "goo020": [
+    "goo", 
+    "go.on Gesellschaft für Bus- und Schienenverkehr mbH"
+  ],
+  "goo030": [
+    "goo", 
+    "go.on Gesellschaft für Bus- und Schienenverkehr mbH"
+  ],
   "GY": [
     "GA",
     "Go-Ahead Bayern GmbH"
@@ -1287,12 +1359,28 @@
     "SBB",
     "SBB GmbH"
   ],
+  "L701": [
+    "SBB", 
+    "SBB GmbH"
+  ],
+  "L721": [
+    "SBB", 
+    "SBB GmbH"
+  ],
   "L8": [
     "BRB",
     "Bayerische Regiobahn"
   ],
   "LD": [
     "TL",
+    "trilex - Die Länderbahn GmbH DLB"
+  ],
+  "LDMDSB": [
+    "MDS", 
+    "S-Bahn Mitteldeutschland - Die Länderbahn GmbH"
+  ],
+  "LDTL": [
+    "TL", 
     "trilex - Die Länderbahn GmbH DLB"
   ],
   "LDTLX": [
@@ -1570,6 +1658,10 @@
   "RS": [
     "RE",
     "Regionalverkehre Start Deutschland GmbH"
+  ],
+  "RSMD": [
+    "RSM", 
+    "Regionalverkehre Start Deutschland GmbH (Start Mitteldeutschland)"
   ],
   "RSNM": [
     "RSN",
