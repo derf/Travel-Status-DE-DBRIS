@@ -327,6 +327,7 @@ my %model_name = (
 	'429'      => [ 'FLIRT', 'BR 429' ],
 	'1430'     => [ 'FLIRT', 'BR 1430' ],
 	'430'      => ['BR 430'],
+	'1440'     => [ 'Coradia Continental', 'BR 1440' ],
 	'440'      => [ 'Coradia Continental', 'BR 440' ],
 	'442'      => [ 'Talent 2',            'BR 442' ],
 	'445'      => [ 'Twindexx Vario',      'BR 445' ],
@@ -467,6 +468,7 @@ sub parse_model {
 		'429'      => 0,
 		'1430'     => 0,
 		'430'      => 0,
+		'1440'     => 0,
 		'440'      => 0,
 		'442'      => 0,
 		'445'      => 0,
@@ -583,6 +585,9 @@ sub parse_model {
 			}
 			elsif ( $carriage->model == 430 or $carriage->model == 431 ) {
 				$ml{'430'}++;
+			}
+			elsif (substr( $carriage->uic_id, 5, 4 ) eq '1440' or substr( $carriage->uic_id, 5, 4 ) eq '1441' ) {
+			    $ml{'1440'}++;
 			}
 			elsif ($carriage->model == 440
 				or $carriage->model == 441
