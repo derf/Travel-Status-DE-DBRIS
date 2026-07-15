@@ -335,6 +335,7 @@ my %model_name = (
 	'445446'   => [ 'Stadler KISS',        'BR 445' ],
 	'462'      => [ 'Desiro HC',           'BR 462' ],
 	'463'      => [ 'Mireo',               'BR 463' ],
+	'464'      => [ 'Mireo Smart',         'BR 464' ],
 	'475'      => [ 'TGV',                 'BR 475' ],
 	'526'      => [ 'FLIRT Akku',          'BR 526' ],
 	'563'      => [ 'Mireo Plus B',        'BR 563' ],
@@ -476,6 +477,7 @@ sub parse_model {
 		'445446'   => 0,
 		'462'      => 0,
 		'463'      => 0,
+		'464'      => 0,
 		'475'      => 0,
 		'526'      => 0,
 		'563'      => 0,
@@ -610,6 +612,9 @@ sub parse_model {
 			{
 				$ml{'463'}++;
 			}
+			elsif ($carriage->model == 464 ) {
+            	$ml{'464'}++;
+            }
 			elsif ( substr( $carriage->uic_id, 5, 4 ) =~ m{ 44 [56] [16] }x ) {
 				$ml{'445446'}++;
 			}
