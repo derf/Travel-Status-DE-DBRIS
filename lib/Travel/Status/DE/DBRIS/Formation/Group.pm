@@ -288,6 +288,7 @@ my %ice_name = (
 	9207 => 'Altenbeken',
 	9208 => 'Nationalpark Bayrischer Wald',
 	9212 => 'Braunschweig',
+	9216 => 'Ulm',
 	9218 => 'Ludwigslust',
 	9220 => 'Steiermark',
 	9223 => '75 Jahre Bundespolizei',
