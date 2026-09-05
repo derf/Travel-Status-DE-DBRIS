@@ -345,6 +345,8 @@ my %model_name = (
 	'463'      => [ 'Mireo',               'BR 463' ],
 	'464'      => [ 'Mireo Smart',         'BR 464' ],
 	'475'      => [ 'TGV',                 'BR 475' ],
+	'501'      => [ 'SMILE',               'RABe 501' ],
+	'503'	   => [ 'Astoro',              'RABe 503' ],
 	'526'      => [ 'FLIRT Akku',          'BR 526' ],
 	'563'      => [ 'Mireo Plus B',        'BR 563' ],
 	'612'      => [ 'RegioSwinger',        'BR 612' ],
@@ -487,6 +489,8 @@ sub parse_model {
 		'463'      => 0,
 		'464'      => 0,
 		'475'      => 0,
+		'501'      => 0,
+		'503'      => 0,
 		'526'      => 0,
 		'563'      => 0,
 		'612'      => 0,
@@ -638,6 +642,12 @@ sub parse_model {
 			}
 			elsif ( $carriage->model == 475 ) {
 				$ml{'475'}++;
+			}
+			elsif ( $carriage->model == 501 ) {
+				$ml{'501'}++;
+			}
+			elsif ( $carriage->model == 503 or $carriage->model == 610 ) {
+				$ml{'503'}++;
 			}
 			elsif ( $carriage->model == 526 ) {
 				$ml{'526'}++;
