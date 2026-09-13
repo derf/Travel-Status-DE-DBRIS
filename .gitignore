@@ -6,3 +6,8 @@
 /MYMETA.*
 
 /lib/Travel/Status/DE/DBRIS/Operators.pm
+
+# Directories created by IDE's 
+/.idea
+/.vs
+/.vscode
