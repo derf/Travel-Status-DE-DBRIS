@@ -8,7 +8,7 @@ use utf8;
 use parent 'Class::Accessor';
 use List::Util qw(uniq);
 
-our $VERSION = '0.33';
+our $VERSION = '0.34';
 
 Travel::Status::DE::DBRIS::Formation::Group->mk_ro_accessors(
 	qw(designation name train_no train_type description desc_short destination has_sectors model series start_percent end_percent)
@@ -297,6 +297,7 @@ my %ice_name = (
 	9229 => 'Zwickau',
 	9230 => 'Kassel',
 	9232 => 'Mannheim',
+	9233 => 'Riesa',
 	9234 => 'Ruhr',
 	9237 => 'Spree',
 	9457 => 'Bundesrepublik Deutschland',
