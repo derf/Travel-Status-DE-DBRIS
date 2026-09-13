@@ -297,6 +297,7 @@ my %ice_name = (
 	9229 => 'Zwickau',
 	9230 => 'Kassel',
 	9232 => 'Mannheim',
+	9233 => 'Riesa',
 	9234 => 'Ruhr',
 	9237 => 'Spree',
 	9457 => 'Bundesrepublik Deutschland',
