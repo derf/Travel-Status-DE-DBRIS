@@ -272,6 +272,7 @@ my %ice_name = (
 	8022 => 'Waldecker Land',
 	8029 => 'Europa/Europe',
 	8052 => '#45 Halfway. Full Speed',
+	8055 => 'Europa/Europe',
 	9006 => 'Martin Luther',
 	9009 => 'Cottbus/Chóśebuz',
 	9018 => 'Freistaat Bayern',
