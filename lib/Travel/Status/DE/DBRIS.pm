@@ -21,7 +21,7 @@ use Travel::Status::DE::DBRIS::JourneyAtStop;
 use Travel::Status::DE::DBRIS::Journey;
 use Travel::Status::DE::DBRIS::Location;
 
-our $VERSION = '0.35';
+our $VERSION = '0.36';
 
 # {{{ Constructors
 
@@ -517,7 +517,7 @@ Non-blocking variant;
 
 =head1 VERSION
 
-version 0.35
+version 0.36
 
 =head1 DESCRIPTION
 
