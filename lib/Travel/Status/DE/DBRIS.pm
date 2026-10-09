@@ -32,6 +32,7 @@ sub new {
 
 	if ( not $ua ) {
 		my %lwp_options = %{ $conf{lwp_options} // { timeout => 20 } };
+		$lwp_options{ssl_opts}{SSL_ciphersuites} = 'TLS_AES_256_GCM_SHA384';
 		$ua = LWP::UserAgent->new(%lwp_options);
 		$ua->env_proxy;
 	}
