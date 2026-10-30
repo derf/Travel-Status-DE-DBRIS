@@ -1,3 +1,13 @@
+Travel::Status::DE::DBRIS 0.38 - Fri Oct 30 2026
+
+    * Try another Akamai TLS fingerprinting workaround.
+      At this rate, this module may be discontinued soon.
+
+Travel::Status::DE::DBRIS 0.37 - Thu Oct 29 2026
+
+    * Work around latest Akamai BMP TLS fingerprinting rules
+    * Update rolling stock models and train names (Lili Urban)
+
 Travel::Status::DE::DBRIS 0.36 - Fri Oct 09 2026
 
     * Work around latest Akamai BMP TLS fingerprinting rules
