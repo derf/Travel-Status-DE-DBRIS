@@ -530,10 +530,10 @@ sub parse_model {
 		}
 
 		if ( $carriage->country == 80 ) {
-			if ( $carriage->uic_id, 4, 4 ) eq '8091'
-				or $carriage->uic_id, 4, 4 ) eq '8491'
-				or $carriage->uic_id, 4, 4 ) eq '1791'
-				or $carriage->uic_id, 4, 4 ) eq '2891' )
+			if ( substr( $carriage->uic_id, 4, 4 ) eq '8091'
+				or substr( $carriage->uic_id, 4, 4 ) eq '8491'
+				or substr( $carriage->uic_id, 4, 4 ) eq '1791'
+				or substr( $carriage->uic_id, 4, 4 ) eq '2891' )
 			{
 				$ml{'8091'}++;
 			}
@@ -730,11 +730,11 @@ sub parse_model {
 		}
 		# Tschechische Republik
 		elsif ( $carriage->country == 54 ) {
-		    if ( $carriage->uic_id, 4, 4 ) eq '1990'
-            	or $carriage->uic_id, 4, 4 ) eq '2090'
-            	or $carriage->uic_id, 4, 4 ) eq '8090'
-            	or $carriage->uic_id, 4, 4 ) eq '8490'
-            	or $carriage->uic_id, 4, 4 ) eq '8590' )
+		    if ( substr($carriage->uic_id, 4, 4 ) eq '1990'
+            	or substr( $carriage->uic_id, 4, 4 ) eq '2090'
+            	or substr( $carriage->uic_id, 4, 4 ) eq '8090'
+            	or substr( $carriage->uic_id, 4, 4 ) eq '8490'
+            	or substr( $carriage->uic_id, 4, 4 ) eq '8590' )
             {
             	$ml{'1990'}++;
             }
