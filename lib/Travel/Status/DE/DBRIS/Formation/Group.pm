@@ -323,7 +323,8 @@ my %ice_name = (
 my %model_name = (
 	'011'      => [ 'ICE T',    'ÖBB 4011' ],
 	'023'      => [ 'CFL KISS', 'CFL 2300' ],
-	'091'      => ['ICE L'],
+	'1990'     => [ 'ComfortJet' ],
+	'8091'     => ['ICE L'],
 	'401'      => [ 'ICE 1',        'BR 401' ],
 	'402'      => [ 'ICE 2',        'BR 402' ],
 	'403.S1'   => [ 'ICE 3',        'BR 403, 1. Serie' ],
@@ -468,7 +469,8 @@ sub parse_model {
 	my %ml = (
 		'011'      => 0,
 		'023'      => 0,
-		'091'      => 0,
+		'1990'     => 0,
+		'8091'     => 0,
 		'401'      => 0,
 		'402'      => 0,
 		'403.S1'   => 0,
@@ -530,12 +532,12 @@ sub parse_model {
 		}
 
 		if ( $carriage->country == 80 ) {
-			if (   $carriage->model == 91
-				or $carriage->model == 491
-				or $carriage->model == 791
-				or $carriage->model == 891 )
+			if ( substr( $carriage->uic_id, 4, 4 ) eq '8091'
+				or substr( $carriage->uic_id, 4, 4 ) eq '8491'
+				or substr( $carriage->uic_id, 4, 4 ) eq '1791'
+				or substr( $carriage->uic_id, 4, 4 ) eq '2891' )
 			{
-				$ml{'091'}++;
+				$ml{'8091'}++;
 			}
 			elsif ( $carriage->model == 401
 				or ( $carriage->model >= 801 and $carriage->model <= 804 ) )
@@ -606,16 +608,16 @@ sub parse_model {
 			elsif ( $carriage->model == 429 or $carriage->model == 829 ) {
 				$ml{'429'}++;
 			}
-			elsif (substr( $carriage->uic_id, 5, 4 ) eq '1430'
-				or substr( $carriage->uic_id, 5, 4 ) eq '1830' )
+			elsif (substr( $carriage->uic_id, 4, 4 ) eq '1430'
+				or substr( $carriage->uic_id, 4, 4 ) eq '1830' )
 			{
 				$ml{'1430'}++;
 			}
 			elsif ( $carriage->model == 430 or $carriage->model == 431 ) {
 				$ml{'430'}++;
 			}
-			elsif (substr( $carriage->uic_id, 5, 4 ) eq '1440'
-				or substr( $carriage->uic_id, 5, 4 ) eq '1441' )
+			elsif (substr( $carriage->uic_id, 4, 4 ) eq '1440'
+				or substr( $carriage->uic_id, 4, 4 ) eq '1441' )
 			{
 				$ml{'1440'}++;
 			}
@@ -654,12 +656,6 @@ sub parse_model {
 			}
 			elsif ( $carriage->model == 475 ) {
 				$ml{'475'}++;
-			}
-			elsif ( $carriage->model == 501 ) {
-				$ml{'501'}++;
-			}
-			elsif ( $carriage->model == 503 or $carriage->model == 610 ) {
-				$ml{'503'}++;
 			}
 			elsif ( $carriage->model == 526 ) {
 				$ml{'526'}++;
@@ -713,15 +709,37 @@ sub parse_model {
 				$ml{'IC2.TWIN'}++;
 			}
 		}
+		# Österreich
 		elsif ( $carriage->country == 81 ) {
 			if ( substr( $carriage->uic_id, 4, 4 ) eq '4011' ) {
 				$ml{'011'}++;
 			}
 		}
+		# Luxemburg
 		elsif ( $carriage->country == 82 ) {
 			if ( $carriage->model == 23 ) {
 				$ml{'023'}++;
 			}
+		}
+		# Schweiz
+		elsif ( $carriage->country == 85 ) {
+			if ( $carriage->model == 501 ) {
+        		$ml{'501'}++;
+        	}
+        	elsif ( $carriage->model == 503 or $carriage->model == 610 ) {
+        		$ml{'503'}++;
+        	}
+		}
+		# Tschechische Republik
+		elsif ( $carriage->country == 54 ) {
+		    if ( substr($carriage->uic_id, 4, 4 ) eq '1990'
+            	or substr( $carriage->uic_id, 4, 4 ) eq '2090'
+            	or substr( $carriage->uic_id, 4, 4 ) eq '8090'
+            	or substr( $carriage->uic_id, 4, 4 ) eq '8490'
+            	or substr( $carriage->uic_id, 4, 4 ) eq '8590' )
+            {
+            	$ml{'1990'}++;
+            }
 		}
 	}
 
