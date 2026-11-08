@@ -370,6 +370,7 @@ my %model_name = (
 	'632'      => [ 'Link II',             'BR 632' ],
 	'633'      => [ 'Link III',            'BR 633' ],
 	'640'      => [ 'LINT 27',             'BR 640' ],
+	'641'	   => [ 'A TER',               'BR 641' ],
 	'642'      => [ 'Desiro Classic',      'BR 642' ],
 	'643'      => [ 'TALENT',              'BR 643' ],
 	'644'      => [ 'TALENT',              'BR 644' ],
@@ -515,6 +516,7 @@ sub parse_model {
 		'632'      => 0,
 		'633'      => 0,
 		'640'      => 0,
+		'641'	   => 0,
 		'642'      => 0,
 		'643'      => 0,
 		'644'      => 0,
@@ -687,6 +689,9 @@ sub parse_model {
 			elsif ( $carriage->model == 640 ) {
 				$ml{'640'}++;
 			}
+			elsif ( $carriage->model == 641 ) {
+				$ml{'641'}++;
+			}
 			elsif ( $carriage->model == 642 ) {
 				$ml{'642'}++;
 			}
@@ -746,7 +751,7 @@ sub parse_model {
 	my @likelihood = reverse sort { $ml{$a} <=> $ml{$b} } keys %ml;
 
 	# Less than two carriages are generally inconclusive.
-	# Exceptions: BR 631 (Link I), 640 (LINT 27, 650 (RS1)
+	# Exceptions: BR 631 (Link I), 640 (LINT 27), 641 (A TER), 650 (RS1)
 	# only have a single carriage
 	if (
 		$ml{ $likelihood[0] } < 2
@@ -754,6 +759,7 @@ sub parse_model {
 			(
 				   $likelihood[0] eq '631'
 				or $likelihood[0] eq '640'
+				or $likelihood[0] eq '641'
 				or $likelihood[0] eq '650'
 			)
 			and @carriages == 1
