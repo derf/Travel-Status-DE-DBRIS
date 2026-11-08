@@ -23,6 +23,12 @@ use Travel::Status::DE::DBRIS::Location;
 
 our $VERSION = '0.38';
 
+# bahn.de employs Akamai BMP, whose fingerprinting includes the advertised
+# TLS options. So we gotta work around that, too.
+my %tls_options = (
+	SSL_ciphersuites => 'TLS_AES_256_GCM_SHA384:TLS_CHACHA20_POLY1305_SHA256',
+);
+
 # {{{ Constructors
 
 sub new {
@@ -32,9 +38,9 @@ sub new {
 
 	if ( not $ua ) {
 		my %lwp_options = %{ $conf{lwp_options} // { timeout => 20 } };
-
-		# work around Akamai BMP TLS fingerprinting
-		$lwp_options{ssl_opts}{SSL_ciphersuites} = 'TLS_AES_256_GCM_SHA384:TLS_CHACHA20_POLY1305_SHA256';
+		while ( my ( $k, $v ) = each %tls_options ) {
+			$lwp_options{ssl_opts}{$k} = $v;
+		}
 		$ua = LWP::UserAgent->new(%lwp_options);
 		$ua->env_proxy;
 	}
@@ -216,6 +222,10 @@ sub new_p {
 		return $promise->reject(
 			'station / geoSearch / locationSearch / journey flag must be passed'
 		);
+	}
+
+	if ( $conf{user_agent}->can('tls_options') ) {
+		$conf{user_agent}->tls_options( \%tls_options );
 	}
 
 	my $self = $obj->new( %conf, async => 1 );
