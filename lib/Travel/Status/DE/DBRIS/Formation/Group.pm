@@ -28,6 +28,7 @@ my %ice_name = (
 	106  => 'Itzehoe',
 	107  => 'Plattling',
 	108  => 'Lichtenfels',
+	109	 => 'Lüneburg',
 	110  => 'Gelsenkirchen',
 	111  => 'Nürnberg',
 	112  => 'Memmingen',
