@@ -50,6 +50,7 @@ my %ice_name = (
 	160  => 'Mülheim an der Ruhr',
 	161  => 'Bebra',
 	162  => 'Geisenheim/Rheingau',
+	164  => 'Itzehoe',
 	166  => 'Gelnhausen',
 	167  => 'Garmisch-Partenkirchen',
 	168  => 'Crailsheim',
