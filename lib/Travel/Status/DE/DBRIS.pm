@@ -21,7 +21,7 @@ use Travel::Status::DE::DBRIS::JourneyAtStop;
 use Travel::Status::DE::DBRIS::Journey;
 use Travel::Status::DE::DBRIS::Location;
 
-our $VERSION = '0.38';
+our $VERSION = '0.39';
 
 # bahn.de employs Akamai BMP, whose fingerprinting includes the advertised
 # TLS options. So we gotta work around that, too.
@@ -527,7 +527,7 @@ Non-blocking variant;
 
 =head1 VERSION
 
-version 0.38
+version 0.39
 
 =head1 DESCRIPTION
 
