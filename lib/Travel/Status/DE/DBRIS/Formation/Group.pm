@@ -234,7 +234,7 @@ my %ice_name = (
 	1523 => 'Hansestadt Greifswald',
 	1524 => 'Hansestadt Rostock',
 	1807 => 'Nationalpark Schleswig-Holsteinisches Wattenmeer',
-    1817 => 'Wetterau',
+	1817 => 'Wetterau',
 	2853 => 'Nationalpark Sächsische Schweiz',
 	2865 => 'Remstal',
 	2868 => 'Nationalpark Niedersächsisches Wattenmeer',
@@ -323,7 +323,7 @@ my %ice_name = (
 my %model_name = (
 	'011'      => [ 'ICE T',    'ÖBB 4011' ],
 	'023'      => [ 'CFL KISS', 'CFL 2300' ],
-	'1990'     => [ 'ComfortJet' ],
+	'1990'     => ['ComfortJet'],
 	'8091'     => ['ICE L'],
 	'401'      => [ 'ICE 1',        'BR 401' ],
 	'402'      => [ 'ICE 2',        'BR 402' ],
@@ -359,7 +359,7 @@ my %model_name = (
 	'464'      => [ 'Mireo Smart',         'BR 464' ],
 	'475'      => [ 'TGV',                 'BR 475' ],
 	'501'      => [ 'SMILE',               'RABe 501' ],
-	'503'	   => [ 'Astoro',              'RABe 503' ],
+	'503'      => [ 'Astoro',              'RABe 503' ],
 	'526'      => [ 'FLIRT Akku',          'BR 526' ],
 	'563'      => [ 'Mireo Plus B',        'BR 563' ],
 	'612'      => [ 'RegioSwinger',        'BR 612' ],
@@ -370,7 +370,7 @@ my %model_name = (
 	'632'      => [ 'Link II',             'BR 632' ],
 	'633'      => [ 'Link III',            'BR 633' ],
 	'640'      => [ 'LINT 27',             'BR 640' ],
-	'641'	   => [ 'A TER',               'BR 641' ],
+	'641'      => [ 'A TER',               'BR 641' ],
 	'642'      => [ 'Desiro Classic',      'BR 642' ],
 	'643'      => [ 'TALENT',              'BR 643' ],
 	'644'      => [ 'TALENT',              'BR 644' ],
@@ -516,7 +516,7 @@ sub parse_model {
 		'632'      => 0,
 		'633'      => 0,
 		'640'      => 0,
-		'641'	   => 0,
+		'641'      => 0,
 		'642'      => 0,
 		'643'      => 0,
 		'644'      => 0,
@@ -534,10 +534,10 @@ sub parse_model {
 		}
 
 		if ( $carriage->country == 80 ) {
-			if ( substr( $carriage->uic_id, 4, 4 ) eq '8091'
-				or substr( $carriage->uic_id, 4, 4 ) eq '8491'
-				or substr( $carriage->uic_id, 4, 4 ) eq '1791'
-				or substr( $carriage->uic_id, 4, 4 ) eq '2891' )
+			if (   $carriage->model4 eq '8091'
+				or $carriage->model4 eq '8491'
+				or $carriage->model4 eq '1791'
+				or $carriage->model4 eq '2891' )
 			{
 				$ml{'8091'}++;
 			}
@@ -610,16 +610,16 @@ sub parse_model {
 			elsif ( $carriage->model == 429 or $carriage->model == 829 ) {
 				$ml{'429'}++;
 			}
-			elsif (substr( $carriage->uic_id, 4, 4 ) eq '1430'
-				or substr( $carriage->uic_id, 4, 4 ) eq '1830' )
+			elsif ($carriage->model4 eq '1430'
+				or $carriage->model4 eq '1830' )
 			{
 				$ml{'1430'}++;
 			}
 			elsif ( $carriage->model == 430 or $carriage->model == 431 ) {
 				$ml{'430'}++;
 			}
-			elsif (substr( $carriage->uic_id, 4, 4 ) eq '1440'
-				or substr( $carriage->uic_id, 4, 4 ) eq '1441' )
+			elsif ($carriage->model4 eq '1440'
+				or $carriage->model4 eq '1441' )
 			{
 				$ml{'1440'}++;
 			}
@@ -714,37 +714,41 @@ sub parse_model {
 				$ml{'IC2.TWIN'}++;
 			}
 		}
+
 		# Österreich
 		elsif ( $carriage->country == 81 ) {
-			if ( substr( $carriage->uic_id, 4, 4 ) eq '4011' ) {
+			if ( $carriage->model4 eq '4011' ) {
 				$ml{'011'}++;
 			}
 		}
+
 		# Luxemburg
 		elsif ( $carriage->country == 82 ) {
 			if ( $carriage->model == 23 ) {
 				$ml{'023'}++;
 			}
 		}
+
 		# Schweiz
 		elsif ( $carriage->country == 85 ) {
 			if ( $carriage->model == 501 ) {
-        		$ml{'501'}++;
-        	}
-        	elsif ( $carriage->model == 503 or $carriage->model == 610 ) {
-        		$ml{'503'}++;
-        	}
+				$ml{'501'}++;
+			}
+			elsif ( $carriage->model == 503 or $carriage->model == 610 ) {
+				$ml{'503'}++;
+			}
 		}
+
 		# Tschechische Republik
 		elsif ( $carriage->country == 54 ) {
-		    if ( substr($carriage->uic_id, 4, 4 ) eq '1990'
-            	or substr( $carriage->uic_id, 4, 4 ) eq '2090'
-            	or substr( $carriage->uic_id, 4, 4 ) eq '8090'
-            	or substr( $carriage->uic_id, 4, 4 ) eq '8490'
-            	or substr( $carriage->uic_id, 4, 4 ) eq '8590' )
-            {
-            	$ml{'1990'}++;
-            }
+			if (   $carriage->model4 eq '1990'
+				or $carriage->model4 eq '2090'
+				or $carriage->model4 eq '8090'
+				or $carriage->model4 eq '8490'
+				or $carriage->model4 eq '8590' )
+			{
+				$ml{'1990'}++;
+			}
 		}
 	}
 
