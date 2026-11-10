@@ -26,7 +26,8 @@ our $VERSION = '0.39';
 # bahn.de employs Akamai BMP, whose fingerprinting includes the advertised
 # TLS options. So we gotta work around that, too.
 my %tls_options = (
-	SSL_ciphersuites => 'TLS_AES_256_GCM_SHA384:TLS_CHACHA20_POLY1305_SHA256',
+	SSL_ciphersuites =>
+'TLS_AES_128_GCM_SHA256:TLS_CHACHA20_POLY1305_SHA256:TLS_AES_256_GCM_SHA384:TLS_AES_128_CCM_SHA256:TLS_AES_128_CCM_8_SHA256',
 );
 
 # {{{ Constructors
